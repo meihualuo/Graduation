@@ -19,7 +19,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v){
             main_newGame ->{
-                startActivity(Intent(this,NewGameActivity::class.java))
+                startActivity(NewGameActivity::class.java)
             }
         }
     }
