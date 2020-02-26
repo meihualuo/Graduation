@@ -5,15 +5,14 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.os.Parcel
-import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
-import java.util.jar.Attributes
+import com.example.mazigame.model.MapModel
 
 class MazeView : View {
 
     private var mPaint = Paint()
+    var map:kotlin.Array<kotlin.IntArray?>?
 
     constructor(ctx: Context) : super(ctx)
 
@@ -23,23 +22,25 @@ class MazeView : View {
 
     init {
         mPaint.color = Color.BLUE
+        var mapModel = MapModel(20,20)
+        map = mapModel.map
     }
 
-//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-//        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
-//        var widthMode = MeasureSpec.getMode(widthMeasureSpec)
-//        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
-//        var heightMode = MeasureSpec.getMode(heightMeasureSpec)
-//
-//        if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST) {
-//            setMeasuredDimension(300, 300)
-//        } else if (widthMode == MeasureSpec.AT_MOST) {
-//            setMeasuredDimension(300, heightSize)
-//        } else if (heightMode == MeasureSpec.AT_MOST) {
-//            setMeasuredDimension(widthSize, 300)
-//        }
-//    }
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        var widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
+        var heightMode = MeasureSpec.getMode(heightMeasureSpec)
+
+        if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(300, 300)
+        } else if (widthMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(300, heightSize)
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(widthSize, 300)
+        }
+    }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
