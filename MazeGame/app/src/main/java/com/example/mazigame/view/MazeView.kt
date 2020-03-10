@@ -24,7 +24,7 @@ class MazeView : View {
     init {
         wallPaint.color = Color.BLUE
         columnPaint.color = Color.BLACK
-        var mapModel = MapModel(21,21)
+        var mapModel = MapModel(81,81)
         map = mapModel.map
     }
 
