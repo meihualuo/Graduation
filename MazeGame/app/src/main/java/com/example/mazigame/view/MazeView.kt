@@ -1,31 +1,46 @@
 package com.example.mazigame.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
+import androidx.core.view.marginLeft
+import com.example.mazigame.R
+import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
 
 class MazeView : View {
 
+    val TAG = "MazeView"
     private var wallPaint = Paint()
     private var columnPaint = Paint()
-    var map:kotlin.Array<kotlin.IntArray?>?
+    private var peoplePaint = Paint()
+    var mapModel:MapModel
+    var wallSide:Int?=null
+    var map:Array<IntArray>
+    var people:CubeModel
+    var mContext:Context
 
-    constructor(ctx: Context) : super(ctx)
+    constructor(ctx: Context) : super(ctx){
+        mContext = ctx
+    }
 
-    constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
+    constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs){
+        mContext = ctx
+    }
 
-    constructor(ctx: Context, attrs: AttributeSet, defStyleAttr: Int) : super(ctx, attrs, defStyleAttr)
+    constructor(ctx: Context, attrs: AttributeSet, defStyleAttr: Int) : super(ctx, attrs, defStyleAttr){
+        mContext = ctx
+    }
 
     init {
         wallPaint.color = Color.BLUE
         columnPaint.color = Color.BLACK
-        var mapModel = MapModel(81,81)
+        peoplePaint.color = Color.RED
+        mapModel = MapModel(10,16)
         map = mapModel.map
+        people = CubeModel(1,1)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -54,26 +69,67 @@ class MazeView : View {
 //        canvas?.drawRect((0+paddingLeft).toFloat(), (0+paddingTop).toFloat(), (100+paddingLeft).toFloat(), (100+paddingTop).toFloat(),mPaint)
 //        canvas?.drawRect(Rect(paddingLeft,paddingTop,width/2,height/2),mPaint)
 
-        //获取map的尺寸
-        var widthSize = map?.size
-        var heightSize = map?.get(0)?.size
+        var bitmap = BitmapFactory.decodeResource(mContext.resources,R.drawable.image_1)
+//        canvas?.drawBitmap(bitmap,src,dst,Paint())
 
+        var matrix = Matrix()
+        var srcf = RectF(100f,100f,400f,400f)
+        var dstf = RectF(0f,100f,200f,200f)
+        matrix.setRectToRect(srcf,dstf,Matrix.ScaleToFit.CENTER)
         //计算每个地图格子的边长
-        var wallWidth = width/ widthSize!!
-        var wallHeight = height/heightSize!!
+        canvas?.drawBitmap(bitmap,matrix,Paint())
+        var wallWidth = width/ mapModel.wide
+        var wallHeight = height/mapModel.high
 
         //选取较小者作为格子边长
-        var wallSide = if(wallHeight>wallWidth ) wallWidth else wallHeight
+        wallSide = if(wallHeight>wallWidth ) wallWidth else wallHeight
+
+        //计算左偏移量
+        var marginLeft = (width- wallSide!!*mapModel.wide)/2
 
         //遍历数组，绘制地图
-        for (i in 1..widthSize){
-            for(j in 1..heightSize){
-                if(map?.get(i-1)?.get(j-1) == 1){
-                    canvas?.drawRect(Rect(wallSide*(i-1),wallSide*(j-1),wallSide*(i),wallSide*(j)),wallPaint)
-                }else if(map?.get(i-1)?.get(j-1) == 2){
-                    canvas?.drawRect(Rect(wallSide*(i-1),wallSide*(j-1),wallSide*(i),wallSide*(j)),columnPaint)
+        canvas?.save()
+        canvas?.translate(marginLeft.toFloat(), 0F)
+        for (i in 1..mapModel.wide){
+            for(j in 1..mapModel.high){
+                if(map[i-1][j-1] == 1){
+                    canvas?.drawRect(Rect(wallSide!!*(i-1),wallSide!!*(j-1),wallSide!!*(i),wallSide!!*(j)),wallPaint)
+                }else if(map[i-1][j-1] == 2){
+                    canvas?.drawRect(Rect(wallSide!!*(i-1),wallSide!!*(j-1),wallSide!!*(i),wallSide!!*(j)),columnPaint)
                 }
             }
+        }
+        //绘制人物
+        canvas?.drawRect(Rect(wallSide!!*(people.weighe),wallSide!!*(people.heighe),wallSide!!*(people.weighe+1),wallSide!!*(people.heighe+1)),peoplePaint)
+        canvas?.restore()
+
+    }
+
+    fun moveOfTop(){
+        if(people.heighe>1 && map[people.weighe][people.heighe-1] == 0){
+            people.heighe -= 1
+            invalidate()
+        }
+    }
+
+    fun moveOfBottom(){
+        if(people.heighe<mapModel.high-2 && map[people.weighe][people.heighe+1] == 0){
+            people.heighe += 1
+            invalidate()
+        }
+    }
+
+    fun moveOfLeft(){
+        if(people.weighe>1 && map[people.weighe -1][people.heighe] == 0){
+            people.weighe -= 1
+            invalidate()
+        }
+    }
+
+    fun moveOfRight(){
+        if(people.weighe<mapModel.wide-2 && map[people.weighe+1][people.heighe] == 0){
+            people.weighe += 1
+            invalidate()
         }
     }
 }
