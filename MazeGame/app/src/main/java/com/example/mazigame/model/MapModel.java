@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Random;
 
 public class MapModel{
-    public int[][] map;
+    private int[][] map;
     public int wide;
     public int high;
-    public final int ROAD = 0;
-    public final int ROAD_NOT_INIT = -1;
-    public final int WAIT = 1;
-    public final int COLUMN = 2;
+    public static final int ROAD = 0;
+    public static final int ROAD_NOT_INIT = -1;
+    public static final int WAIT = 1;
+    public static final int COLUMN = 2;
 
     private List<CubeModel> waits;
 
@@ -26,6 +26,13 @@ public class MapModel{
         initMap(wide, high);
     }
 
+    public void setMap(int[][] map){
+        this.map = map;
+    }
+
+    public int[][] getMap(){
+         return map;
+    }
     private void initMap(int wide, int high) {
         for (int i=1;i<wide-1;i++){
             for (int j=1;j<high-1;j++){
@@ -89,4 +96,49 @@ public class MapModel{
          if(hori+1<wide)if (map[hori+1][vert] == WAIT) waits.add(new CubeModel(hori+1,vert));
     }
 
+    public String mapToString(int[][] map){
+         StringBuilder result = new StringBuilder();
+         if(map == null)
+             return result.toString();
+         for (int i = 0;i<map.length-1;i++){
+             for (int j=0;j<map[0].length-1;j++){
+                 switch (map[i][j]){
+                     case ROAD: {
+                         result.append( "R");
+                         break;
+                     }
+                     case COLUMN:{
+                         result.append( "C");
+                         break;
+                     }
+                     default:{
+                         result.append( "X");
+                     }
+                 }
+             }
+             result.append( "N");
+         }
+         return result.toString();
+    }
+
+    public int[][] stringToMap(String strMap){
+        String[] temp = strMap.split("N");
+        int[][] map = new int[temp.length][temp[0].length()];
+        for (int i = 0; i < temp.length; i++){
+            char[] charTemp = temp[i].toCharArray();
+            for (int j = 0; j < charTemp.length; j++){
+                switch (charTemp[j]){
+                    case 'R': {
+                        map[i][j] = ROAD;
+                        break;
+                    }
+                    case 'C':{
+                        map[i][j] = COLUMN;
+                        break;
+                    }
+                }
+            }
+        }
+         return map;
+    }
 }

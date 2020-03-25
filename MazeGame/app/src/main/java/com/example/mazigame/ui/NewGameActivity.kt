@@ -11,8 +11,11 @@ class NewGameActivity : BaseActivity() , View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_game)
 //        var aa = MapModel(20,20)
+    }
+
+    override fun getLayoutRes(): Int {
+        return R.layout.activity_new_game
     }
 
     override fun onClick(v: View?) {
