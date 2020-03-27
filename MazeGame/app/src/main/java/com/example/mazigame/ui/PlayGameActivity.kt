@@ -32,6 +32,9 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener {
             btn_right -> {
                 maze_view.movePeople(MazeView.MOVE_RIGHT)
             }
+            road -> {
+                maze_view.onChangePromptRoad()
+            }
         }
     }
 }

@@ -141,4 +141,63 @@ public class MapModel{
         }
          return map;
     }
+
+    /**
+     * 递归算法求解路径，自行设计的算法，
+     * 只适用于单路迷宫，如非迷宫求解路径非最短路径
+     * @param map
+     * @param roadList
+     * @param people
+     * @param nowCube
+     * @return
+     */
+    public boolean promptRoad(int[][] map,List<CubeModel> roadList,CubeModel people,CubeModel nowCube){
+
+         if(people.getWeighe() == nowCube.getWeighe() && people.getHeighe() == nowCube.getHeighe()){
+             roadList.add(nowCube);
+             return true;
+         }
+         //向4个方向查找路径
+        if(map[nowCube.getWeighe()-1][nowCube.getHeighe()] == ROAD){
+            map[nowCube.getWeighe()-1][nowCube.getHeighe()] = COLUMN;
+            CubeModel newCube = new CubeModel(nowCube.getWeighe()-2,nowCube.getHeighe());
+            if(promptRoad(map,roadList,people,newCube)){
+                roadList.add(nowCube);
+                map[nowCube.getWeighe()-1][nowCube.getHeighe()] = ROAD;
+                return true;
+            }
+            map[nowCube.getWeighe()-1][nowCube.getHeighe()] = ROAD;
+        }
+        if(map[nowCube.getWeighe()+1][nowCube.getHeighe()] == ROAD){
+            map[nowCube.getWeighe()+1][nowCube.getHeighe()] = COLUMN;
+            CubeModel newCube = new CubeModel(nowCube.getWeighe()+2,nowCube.getHeighe());
+            if(promptRoad(map,roadList,people,newCube)){
+                roadList.add(nowCube);
+                map[nowCube.getWeighe()+1][nowCube.getHeighe()] = ROAD;
+                return true;
+            }
+            map[nowCube.getWeighe()+1][nowCube.getHeighe()] = ROAD;
+        }
+        if(map[nowCube.getWeighe()][nowCube.getHeighe()-1] == ROAD){
+            map[nowCube.getWeighe()][nowCube.getHeighe()-1] = COLUMN;
+            CubeModel newCube = new CubeModel(nowCube.getWeighe(),nowCube.getHeighe()-2);
+            if(promptRoad(map,roadList,people,newCube)){
+                map[nowCube.getWeighe()][nowCube.getHeighe()-1] = ROAD;
+                roadList.add(nowCube);
+                return true;
+            }
+            map[nowCube.getWeighe()][nowCube.getHeighe()-1] = ROAD;
+        }
+        if(map[nowCube.getWeighe()][nowCube.getHeighe()+1] == ROAD){
+            map[nowCube.getWeighe()][nowCube.getHeighe()+1] = COLUMN;
+            CubeModel newCube = new CubeModel(nowCube.getWeighe(),nowCube.getHeighe()+2);
+            if(promptRoad(map,roadList,people,newCube)){
+                roadList.add(nowCube);
+                map[nowCube.getWeighe()][nowCube.getHeighe()+1] = ROAD;
+                return true;
+            }
+            map[nowCube.getWeighe()][nowCube.getHeighe()+1] = ROAD;
+        }
+         return false;
+    }
 }

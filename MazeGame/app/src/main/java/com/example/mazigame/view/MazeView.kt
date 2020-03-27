@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
+import kotlin.math.log
 
 class MazeView : View {
 
@@ -25,6 +27,8 @@ class MazeView : View {
     private lateinit var mapModel:MapModel
     private lateinit var map:Array<IntArray>
     private lateinit var people:CubeModel
+    private var showPromptRoad = false
+    private var roadList:List<CubeModel> ?= null
     var mContext:Context
 
     constructor(ctx: Context) : super(ctx){
@@ -50,6 +54,7 @@ class MazeView : View {
         this.mapModel = MapModel(wide,high)
         this.map = mapModel.map
         this.people = CubeModel(1,1)
+        showPromptRoad = false
     }
 
     fun setPeople(people:CubeModel){
@@ -99,6 +104,14 @@ class MazeView : View {
         }
         //绘制人物
         canvas?.drawRect(rect(people.weighe,people.heighe,wallSide!!),peoplePaint)
+        var rodeRect = {x:Int,y:Int,w:Int ->
+            Rect(x*w+w/2-4,y*w+w/2-4,x*w+w/2+4,y*w+w/2+4)
+        }
+        if(showPromptRoad && roadList != null){
+            roadList?.forEach {
+                canvas?.drawRect(rodeRect(it.weighe,it.heighe,wallSide),peoplePaint)
+            }
+        }
         canvas?.restore()
     }
 
@@ -116,6 +129,17 @@ class MazeView : View {
         //过关判断
         if(people.weighe == mapModel.wide-2 && people.heighe == mapModel.high-2)
             updateGame(20,20)
+        this.invalidate()
+    }
+
+    fun onChangePromptRoad(){
+        this.showPromptRoad = !showPromptRoad
+        if (showPromptRoad){
+            roadList = ArrayList()
+            var nowCube = CubeModel(mapModel.wide-2,mapModel.high-2)
+            mapModel.promptRoad(map, roadList, people, nowCube)
+            Log.i("promptRoad","list.size.toString()")
+        }
         this.invalidate()
     }
 }
