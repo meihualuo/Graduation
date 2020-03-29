@@ -5,4 +5,22 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#66000000</color>
+    <color name="toast_errorColor">#323232</color>
+    <color name="toast_infoColor">#323232</color>
+    <color name="toast_successColor">#323232</color>
+    <color name="toast_warningColor">#FDAF17</color>
+    <color name="toast_textColor">#ffffff</color>
+    <!--MD_dialog相关-->
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="back_gray">#ECEEF3</color>
+    <color name="main_blue">#397CFF</color>
+    <color name="blue_click">#AAB8E0</color>
+    <color name="line_gray">#d6d6d6</color>
+    <color name="text_black">#323232</color>
+    <color name="alpha_white_66">#66ffffff</color>
+
+    <color name="Loading_color">#88000000</color>
+
+    <color name="bottom_sheet_bg">#ffeeeeee</color>
 </resources>

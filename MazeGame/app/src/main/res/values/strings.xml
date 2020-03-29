@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MazeGame</string>
+    <string name="confirm">确定</string>
 </resources>

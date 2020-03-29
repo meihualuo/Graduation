@@ -23,14 +23,17 @@
         <TextView
             android:id="@+id/main_continueGame"
             style="@style/main_btn"
+            android:onClick="onClick"
             android:text="继续游戏" />
         <TextView
             android:id="@+id/main_history"
             style="@style/main_btn"
+            android:onClick="onClick"
             android:text="历史存档" />
         <TextView
             android:id="@+id/main_ranking"
             style="@style/main_btn"
+            android:onClick="onClick"
             android:text="得分排行" />
     </LinearLayout>
 

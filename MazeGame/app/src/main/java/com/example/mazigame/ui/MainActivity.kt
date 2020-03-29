@@ -23,6 +23,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             main_newGame ->{
                 startActivity(NewGameActivity::class.java)
             }
+            main_continueGame -> {
+                var intent = Intent(this,PlayGameActivity::class.java)
+                intent.putExtra("jixuyouxi",true)
+                startActivity(intent)
+            }
         }
     }
 }

@@ -12,8 +12,18 @@ public class MapModel{
     public static final int ROAD_NOT_INIT = -1;
     public static final int WAIT = 1;
     public static final int COLUMN = 2;
+    public static final int MOVE_OF_LEFT = 1;
+    public static final int MOVE_OF_RIGHT = 2;
+    public static final int MOVE_OF_TOP = 3;
+    public static final int MOVE_OF_BOTTOM = 4;
 
     private List<CubeModel> waits;
+
+    public MapModel(int[][] map){
+        this.map = map;
+        this.wide = map.length;
+        this.high = map[0].length;
+    }
 
      public MapModel(int wide,int high){
          this.wide = wide*2+1;
@@ -96,12 +106,12 @@ public class MapModel{
          if(hori+1<wide)if (map[hori+1][vert] == WAIT) waits.add(new CubeModel(hori+1,vert));
     }
 
-    public String mapToString(int[][] map){
+    public static String mapToString(int[][] map){
          StringBuilder result = new StringBuilder();
          if(map == null)
              return result.toString();
-         for (int i = 0;i<map.length-1;i++){
-             for (int j=0;j<map[0].length-1;j++){
+         for (int i = 0;i<map.length;i++){
+             for (int j=0;j<map[0].length;j++){
                  switch (map[i][j]){
                      case ROAD: {
                          result.append( "R");
@@ -121,7 +131,7 @@ public class MapModel{
          return result.toString();
     }
 
-    public int[][] stringToMap(String strMap){
+    public static int[][] stringToMap(String strMap){
         String[] temp = strMap.split("N");
         int[][] map = new int[temp.length][temp[0].length()];
         for (int i = 0; i < temp.length; i++){
@@ -151,7 +161,7 @@ public class MapModel{
      * @param nowCube
      * @return
      */
-    public boolean promptRoad(int[][] map,List<CubeModel> roadList,CubeModel people,CubeModel nowCube){
+    public static boolean promptRoad(int[][] map,List<CubeModel> roadList,CubeModel people,CubeModel nowCube){
 
          if(people.getWeighe() == nowCube.getWeighe() && people.getHeighe() == nowCube.getHeighe()){
              roadList.add(nowCube);

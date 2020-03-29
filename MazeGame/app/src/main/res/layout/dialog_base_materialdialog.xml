@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_m">
+
+    <LinearLayout
+        android:id="@+id/material_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/material_card"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/contentView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/text_L"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:gravity="center"
+                android:minHeight="@dimen/item_height"
+                android:paddingTop="@dimen/margin_m"
+                android:text="Material title"
+                android:textSize="@dimen/text_L" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/margin_m">
+
+                <LinearLayout
+                    android:id="@+id/message_content_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/margin_m"
+                    android:paddingLeft="@dimen/margin"
+                    android:paddingRight="@dimen/margin">
+
+                    <TextView
+                        android:id="@+id/message"
+                        style="@style/text_m"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="1dp"
+                        android:lineSpacingMultiplier="1.3" />
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/buttonLayoutView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_height"
+            android:layout_marginTop="@dimen/margin">
+
+            <View
+                android:id="@+id/v_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/line_gray" />
+
+            <LinearLayout
+                android:id="@+id/buttonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/v_line"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"></LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.hardware.biometrics.BiometricPrompt
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -15,20 +16,14 @@ import kotlin.math.log
 class MazeView : View {
 
     val TAG = "MazeView"
-    companion object{
-        const val MOVE_LEFT = 1
-        const val MOVE_RIGHT = 2
-        const val MOVE_TOP = 3
-        const val MOVE_BOTTOM = 4
-    }
     private var wallPaint = Paint()
     private var columnPaint = Paint()
     private var peoplePaint = Paint()
     private lateinit var mapModel:MapModel
-    private lateinit var map:Array<IntArray>
+    private var map:Array<IntArray>? = null
     private lateinit var people:CubeModel
-    private var showPromptRoad = false
-    private var roadList:List<CubeModel> ?= null
+    var showPromptRoad = false
+    var roadList:List<CubeModel> ?= null
     var mContext:Context
 
     constructor(ctx: Context) : super(ctx){
@@ -47,19 +42,28 @@ class MazeView : View {
         wallPaint.color = Color.BLUE
         columnPaint.color = Color.BLACK
         peoplePaint.color = Color.RED
-        updateGame(20,30)
     }
 
-    private fun updateGame(wide:Int, high:Int){
-        this.mapModel = MapModel(wide,high)
+    fun setPrompt(prompt:Boolean,list:List<CubeModel>){
+        this.showPromptRoad = prompt
+        this.roadList = list
+        this.invalidate()
+    }
+
+    fun updateGame(mapModel: MapModel,people: CubeModel){
+        this.mapModel = mapModel
         this.map = mapModel.map
-        this.people = CubeModel(1,1)
-        showPromptRoad = false
+        this.people = people
+        this.showPromptRoad = false
+        this.invalidate()
     }
 
     fun setPeople(people:CubeModel){
         this.people = people
+        this.invalidate()
     }
+
+
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -79,6 +83,8 @@ class MazeView : View {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        if (map == null)
+            return
         var rect= { x:Int, y:Int, wallSide:Int ->
             Rect(wallSide*x,wallSide*y,wallSide*(x+1),wallSide*(y+1))
         }
@@ -95,9 +101,9 @@ class MazeView : View {
         canvas?.translate(marginLeft.toFloat(), 0F)
         for (i in 1..mapModel.wide){
             for(j in 1..mapModel.high){
-                if(map[i-1][j-1] == MapModel.WAIT){
+                if(map!![i-1][j-1] == MapModel.WAIT){
                     canvas?.drawRect(rect(i-1,j-1,wallSide!!),wallPaint)
-                }else if(map[i-1][j-1] == MapModel.COLUMN){
+                }else if(map!![i-1][j-1] == MapModel.COLUMN){
                     canvas?.drawRect(rect(i-1,j-1,wallSide!!),columnPaint)
                 }
             }
@@ -107,39 +113,12 @@ class MazeView : View {
         var rodeRect = {x:Int,y:Int,w:Int ->
             Rect(x*w+w/2-4,y*w+w/2-4,x*w+w/2+4,y*w+w/2+4)
         }
+        //绘制提示路线
         if(showPromptRoad && roadList != null){
             roadList?.forEach {
                 canvas?.drawRect(rodeRect(it.weighe,it.heighe,wallSide),peoplePaint)
             }
         }
         canvas?.restore()
-    }
-
-    fun movePeople(direction: Int){
-        when(direction){
-            MOVE_LEFT ->
-                if(people.weighe>1 && map[people.weighe -1][people.heighe] == MapModel.ROAD) people.weighe -= 2
-            MOVE_RIGHT ->
-                if(people.weighe<mapModel.wide-2 && map[people.weighe+1][people.heighe] == MapModel.ROAD) people.weighe += 2
-            MOVE_TOP ->
-                if(people.heighe>1 && map[people.weighe][people.heighe-1] == MapModel.ROAD) people.heighe -= 2
-            MOVE_BOTTOM ->
-                if(people.heighe<mapModel.high-2 && map[people.weighe][people.heighe+1] == MapModel.ROAD) people.heighe += 2
-        }
-        //过关判断
-        if(people.weighe == mapModel.wide-2 && people.heighe == mapModel.high-2)
-            updateGame(20,20)
-        this.invalidate()
-    }
-
-    fun onChangePromptRoad(){
-        this.showPromptRoad = !showPromptRoad
-        if (showPromptRoad){
-            roadList = ArrayList()
-            var nowCube = CubeModel(mapModel.wide-2,mapModel.high-2)
-            mapModel.promptRoad(map, roadList, people, nowCube)
-            Log.i("promptRoad","list.size.toString()")
-        }
-        this.invalidate()
     }
 }
