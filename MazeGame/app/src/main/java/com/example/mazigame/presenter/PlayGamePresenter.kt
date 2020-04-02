@@ -29,11 +29,11 @@ class PlayGamePresenter {
         this.listener = listener
     }
 
-    fun onCreate(context: Context,weight:Int,height:Int,allGame: Boolean){
+    fun onCreate(context: Context,oldGame: Boolean){
         this.mContext = context
         GlobalScope.launch(Dispatchers.Main) {
-            if (allGame){
-                val archiveText = ArchiveModel.readFile(mContext!!)
+            if (oldGame){
+                val archiveText = ArchiveModel.readFile(mContext!!, StringUtil.FILE_ARCHIVE)
                 if (archiveText != null) {
                     var ok = withContext(Dispatchers.IO) {
                         var jsonObjectA = JSONObject(archiveText)
@@ -44,6 +44,14 @@ class PlayGamePresenter {
                         var ps = jsonG.getString(StringUtil.KEY_PEOPLE)
                         var psToArray = ps.split("-")
                         mPeople = CubeModel(psToArray[0].toInt(), psToArray[1].toInt())
+                        GameBeam.getInstance().let {
+                            it.mMapModel = mMapModel
+                            it.people = mPeople
+                            it.degree = jsonG.getInt(StringUtil.KEY_DEGREE)
+                            it.type = jsonG.getString(StringUtil.KEY_TYPE)
+                            it.duration = jsonG.getLong(StringUtil.KEY_DURATION)
+                        }
+                        ArchiveModel.saveSetUp(mContext!!)
                         return@withContext true
                     }
                     if (ok) {
@@ -52,10 +60,15 @@ class PlayGamePresenter {
                 }
             }else{
                 mMapModel = withContext(Dispatchers.IO){
-                    return@withContext MapModel(weight,height)
+                    return@withContext MapModel(GameBeam.getInstance().degree!!,GameBeam.getInstance().degree!!)
                 }
                 mPeople = CubeModel(1,1)
                 listener?.updateView(mMapModel!!,mPeople!!)
+                GameBeam.getInstance().let {
+                    it.mMapModel = mMapModel
+                    it.people = mPeople
+                }
+
             }
         }
     }
@@ -86,7 +99,10 @@ class PlayGamePresenter {
 
             GlobalScope.launch(Dispatchers.Main) {
                 mMapModel = withContext(Dispatchers.IO){
-                    return@withContext MapModel(20,20)
+                    GameBeam.getInstance().degreeAdd()
+                    ArchiveModel.saveSetUp(mContext!!)
+                    Thread.sleep(500)
+                    return@withContext MapModel(GameBeam.getInstance().degree!!,GameBeam.getInstance().degree!!)
                 }
                 mPeople = CubeModel(1,1)
                 listener?.updateView(mMapModel!!,mPeople!!)
@@ -111,8 +127,7 @@ class PlayGamePresenter {
     }
 
     fun saveArchive(){
-        var gameBeam = GameBeam("aaa",2000000,"bunan","chuantong",mMapModel!!.map,mPeople!!)
-        ArchiveModel.setDatas(mContext!!,gameBeam)
+        ArchiveModel.setDatas(mContext!!)
     }
 
     fun dropOut(){

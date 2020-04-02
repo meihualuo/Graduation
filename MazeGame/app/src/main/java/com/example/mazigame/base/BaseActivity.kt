@@ -20,4 +20,5 @@ abstract class BaseActivity : AppCompatActivity() {
     fun startActivity(actClass: Class<*>){
         startActivity(Intent(this,actClass))
     }
+
 }

@@ -6,12 +6,30 @@ import android.os.Bundle
 import android.view.View
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
+import com.example.mazigame.bean.GameBeam
+import com.example.mazigame.model.ArchiveModel
+import com.example.mazigame.util.StringUtil
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        intiGameBean()
+    }
+
+    fun intiGameBean(){
+        var text = ArchiveModel.readFile(this,StringUtil.FILE_SET_UP)
+        if (text != null){
+            var json = JSONObject(text)
+            GameBeam.getInstance().degree = (json[StringUtil.KEY_DEGREE] as Int?) ?: 10
+            GameBeam.getInstance().type = (json[StringUtil.KEY_TYPE] as String?) ?: StringUtil.TYPE_TRADITION
+        }else{
+            GameBeam.getInstance().degree =10
+            GameBeam.getInstance().type = StringUtil.TYPE_TRADITION
+        }
+        ArchiveModel.saveSetUp(this)
     }
 
     override fun getLayoutRes(): Int {

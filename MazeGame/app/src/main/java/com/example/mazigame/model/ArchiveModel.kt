@@ -10,22 +10,24 @@ import java.text.SimpleDateFormat
 class ArchiveModel {
 
     companion object {
-        fun setDatas(context: Context, gameBeam: GameBeam) {
-            var name = gameBeam.name
-            var duration = gameBeam.duration
-            var degree = gameBeam.degree
-            var type = gameBeam.type
-            var map = MapModel.mapToString(gameBeam.map)
-            var people =
-                gameBeam.people?.weighe.toString() + "-" + gameBeam.people?.heighe.toString()
-            setDatas(context, name, duration, degree, type, map, people)
+        fun setDatas(context: Context) {
+            GameBeam.getInstance().let {
+                var name = it.name
+                var duration = it.duration
+                var degree = it.degree
+                var type = it.type
+                var map = MapModel.mapToString(it.map)
+                var people =
+                    it.people?.weighe.toString() + "-" + it.people?.heighe.toString()
+                setDatas(context, name, duration, degree, type, map, people)
+            }
         }
 
         fun setDatas(
             context: Context,
             name: String?,
             duration: Long?,
-            degree: String?,
+            degree: Int?,
             type: String?,
             map: String,
             people: String
@@ -41,7 +43,7 @@ class ArchiveModel {
                     put(it.KEY_PEOPLE, people)
                 }
             }
-            val jsonText = readFile(context)
+            val jsonText = readFile(context,StringUtil.FILE_ARCHIVE)
             var jsonObject:JSONObject
             if (jsonText != null)
                 jsonObject = JSONObject(jsonText)
@@ -49,6 +51,16 @@ class ArchiveModel {
                 jsonObject = JSONObject()
             jsonObject.put(name,jsonObjects)
             saveFile(context, jsonObject.toString(), StringUtil.FILE_ARCHIVE)
+        }
+
+        fun saveSetUp(context: Context){
+            var jsonObjects = JSONObject().apply {
+                GameBeam.getInstance().let {
+                    put(StringUtil.KEY_DEGREE,it.degree)
+                    put(StringUtil.KEY_TYPE,it.type)
+                }
+            }
+            saveFile(context,jsonObjects.toString(),StringUtil.FILE_SET_UP)
         }
 
         fun saveFile(context: Context, fileString: String, fileName: String): Boolean {
@@ -64,9 +76,9 @@ class ArchiveModel {
             }
         }
 
-        fun readFile(context: Context): String? {
+        fun readFile(context: Context,fileName: String): String? {
             return try {
-                val file = context.openFileInput(StringUtil.FILE_ARCHIVE)
+                val file = context.openFileInput(fileName)
                 var temp = ByteArray(102400)
                 var len: Int
                 var result = StringBuffer()

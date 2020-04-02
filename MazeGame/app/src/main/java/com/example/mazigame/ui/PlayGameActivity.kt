@@ -19,7 +19,7 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener, PlayGamePresenter
         var isContinution = intent.getBooleanExtra("jixuyouxi",false)
         mPresenter = PlayGamePresenter().also{
             it.setListener(this)
-            it.onCreate(this,10,12,isContinution)
+            it.onCreate(this,isContinution)
         }
 //        if(isContinution)
 //            mPresenter.onContinue()
