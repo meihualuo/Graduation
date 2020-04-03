@@ -5,6 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#66000000</color>
+    <color name="seek_bra_bk">#262D4DAA</color>
     <color name="toast_errorColor">#323232</color>
     <color name="toast_infoColor">#323232</color>
     <color name="toast_successColor">#323232</color>

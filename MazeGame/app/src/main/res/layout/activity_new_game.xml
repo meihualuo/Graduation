@@ -7,12 +7,10 @@
     tools:context=".ui.NewGameActivity">
 
     <TextView
-        android:id="@+id/new_game_create"
         style="@style/main_btn"
         android:layout_above="@+id/new_game_pattern"
         android:layout_centerHorizontal="true"
-        android:onClick="onClick"
-        android:text="创建游戏"/>
+        android:text="难度等级"/>
 
     <TextView
         android:id="@+id/new_game_pattern"
@@ -21,8 +19,9 @@
         android:text="游戏模式" />
 
     <TextView
+        android:id="@+id/new_game_create"
         style="@style/main_btn"
         android:layout_below="@+id/new_game_pattern"
         android:layout_centerHorizontal="true"
-        android:text="难度等级"/>
+        android:text="创建游戏"/>
 </RelativeLayout>
