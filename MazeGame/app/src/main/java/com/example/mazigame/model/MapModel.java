@@ -7,11 +7,16 @@ import java.util.Random;
 public class MapModel{
     private int[][] map;
     public int wide;
-    public int high;
+
     public static final int ROAD = 0;
     public static final int ROAD_NOT_INIT = -1;
     public static final int WAIT = 1;
     public static final int COLUMN = 2;
+    public static final int TERMINAL = 3;
+    public static final int STAIR_IN = 4;
+    public static final int STAIR_OUT = 5;
+
+
     public static final int MOVE_OF_LEFT = 1;
     public static final int MOVE_OF_RIGHT = 2;
     public static final int MOVE_OF_TOP = 3;
@@ -22,30 +27,47 @@ public class MapModel{
     public MapModel(int[][] map){
         this.map = map;
         this.wide = map.length;
-        this.high = map[0].length;
     }
 
-     public MapModel(int wide,int high){
+     public MapModel(int wide){
          this.wide = wide*2+1;
-         this.high = high*2+1;
          init();
+         //取第一g格作为初始起点，并将其邻墙加入待定序列中
+         this.map[1][1] = ROAD;
+         addWaite(1,1);
+         initColumn();
      }
-    private void init(){
-        this.map = new int[wide][high];
-        waits = new ArrayList<>();
-        initMap(wide, high);
-    }
 
-    public void setMap(int[][] map){
-        this.map = map;
-    }
+     public MapModel(int wide,CubeModel statr1,CubeModel statr2){
+         this.wide = wide*2+1;
+         init();
+         this.map[statr1.getWeighe()][statr1.getHeighe()] = STAIR_IN;
+         this.map[statr2.getWeighe()][statr2.getHeighe()] = STAIR_IN;
+         addWaite(statr1.getWeighe(),statr1.getHeighe());
+         addWaite(statr2.getWeighe(),statr2.getHeighe());
+         initColumn();
+     }
+
+     public void addStairOut(CubeModel statr){
+         this.map[statr.getWeighe()][statr.getHeighe()] = STAIR_OUT;
+     }
+
+     public void setTerminal(){
+         this.map[this.wide-2][this.wide-2] = TERMINAL;
+     }
+
+     private void init(){
+         this.map = new int[wide][wide];
+         this.waits = new ArrayList<>();
+         initMap(wide);
+     }
 
     public int[][] getMap(){
-         return map;
+         return this.map;
     }
-    private void initMap(int wide, int high) {
+    private void initMap(int wide) {
         for (int i=1;i<wide-1;i++){
-            for (int j=1;j<high-1;j++){
+            for (int j=1;j<wide-1;j++){
                 if(i%2 == 1 && j%2 == 1){
                     this.map[i][j] = ROAD_NOT_INIT;
                 }else if (i%2 == 0 && j%2 == 0){
@@ -57,17 +79,15 @@ public class MapModel{
         }
         for(int i=0;i<wide;i++){
             this.map[i][0] = COLUMN;
-            this.map[i][high-1] = COLUMN;
+            this.map[i][wide-1] = COLUMN;
         }
-        for(int j=0;j<high;j++){
+        for(int j=0;j<wide;j++){
             this.map[0][j] = COLUMN;
             this.map[wide-1][j] = COLUMN;
         }
+    }
 
-        //取第一g格作为初始起点，并将其邻墙加入待定序列中
-        map[1][1] = ROAD;
-        waits.add(new CubeModel(1,2));
-        waits.add(new CubeModel(2,1));
+    private void initColumn(){
         Random random = new Random();
         while (!waits.isEmpty()){
             int ranInt = random.nextInt(waits.size());
@@ -101,7 +121,7 @@ public class MapModel{
     private void addWaite(int hori,int vert){
          map[hori][vert] = ROAD;
          if(vert-1>0)   if (map[hori][vert-1] == WAIT) waits.add(new CubeModel(hori,vert-1));
-         if(vert+1<high)if (map[hori][vert+1] == WAIT) waits.add(new CubeModel(hori,vert+1));
+         if(vert+1<wide)if (map[hori][vert+1] == WAIT) waits.add(new CubeModel(hori,vert+1));
          if(hori-1>0)   if (map[hori-1][vert] == WAIT) waits.add(new CubeModel(hori-1,vert));
          if(hori+1<wide)if (map[hori+1][vert] == WAIT) waits.add(new CubeModel(hori+1,vert));
     }

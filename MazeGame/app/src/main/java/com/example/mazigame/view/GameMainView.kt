@@ -6,14 +6,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.toRectF
+import com.example.mazigame.R
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
 import com.example.mazigame.util.DensityUtil
 
-class GameMainView(ctx: Context,attrs: AttributeSet) :View(ctx,attrs){
+class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
 
     val TAG = "GameMainView"
     private var columnPaint = Paint()
@@ -29,7 +32,7 @@ class GameMainView(ctx: Context,attrs: AttributeSet) :View(ctx,attrs){
     private var peoVerPad = 0f
 
     init {
-        columnPaint.color = Color.BLACK
+        columnPaint.color = mContext.getColor(R.color.column_bk)
         peoplePaint.color = Color.RED
         wallSide = DensityUtil.dip2px(mContext,20f)
     }
@@ -137,7 +140,7 @@ class GameMainView(ctx: Context,attrs: AttributeSet) :View(ctx,attrs){
         val leftPos = if (people.weighe-horSize > 0) people.weighe-horSize else 0
         val topPos = if (people.heighe-verSize > 0) people.heighe-verSize else 0
         val rightPos = if (people.weighe+horSize < mapModel.wide) people.weighe+horSize else mapModel.wide-1
-        val bottomPos = if (people.heighe+verSize < mapModel.high) people.heighe+verSize else mapModel.high-1
+        val bottomPos = if (people.heighe+verSize < mapModel.wide) people.heighe+verSize else mapModel.wide-1
 
         //遍历数组，绘制地图
         canvas?.save()

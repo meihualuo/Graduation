@@ -6,18 +6,20 @@ import com.example.mazigame.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import kotlin.math.abs
 
 class ArchiveModel {
 
     companion object {
         fun setDatas(context: Context) {
             GameBeam.getInstance().let {
-                var name = it.name
-                var duration = it.duration
-                var degree = it.degree
-                var type = it.type
-                var map = MapModel.mapToString(it.map)
-                var people =
+                val name = it.name
+                val duration = (it.duration ?: 0) + abs(it.startTime!! - System.currentTimeMillis())
+                it.startTime = System.currentTimeMillis()
+                val degree = it.degree
+                val type = it.type
+                val map = MapModel.mapToString(it.mMapModel!!.map)
+                val people =
                     it.people?.weighe.toString() + "-" + it.people?.heighe.toString()
                 setDatas(context, name, duration, degree, type, map, people)
             }
@@ -34,7 +36,7 @@ class ArchiveModel {
         ) {
             var jsonObjects = JSONObject().apply {
                 StringUtil.let {
-                    put(it.KEY_DURATION, duration)
+                    put(it.KEY_DURATION, duration ?: 600000)
                     put(it.KEY_DEGREE, degree)
                     put(it.KEY_TYPE, type)
                     put(it.KEY_MAP, map)
@@ -44,7 +46,7 @@ class ArchiveModel {
                 }
             }
             val jsonText = readFile(context,StringUtil.FILE_ARCHIVE)
-            var jsonObject:JSONObject
+            val jsonObject:JSONObject
             if (jsonText != null)
                 jsonObject = JSONObject(jsonText)
             else
@@ -54,7 +56,7 @@ class ArchiveModel {
         }
 
         fun saveSetUp(context: Context){
-            var jsonObjects = JSONObject().apply {
+            val jsonObjects = JSONObject().apply {
                 GameBeam.getInstance().let {
                     put(StringUtil.KEY_DEGREE,it.degree)
                     put(StringUtil.KEY_TYPE,it.type)
@@ -65,7 +67,7 @@ class ArchiveModel {
 
         fun saveFile(context: Context, fileString: String, fileName: String): Boolean {
             return try {
-                var file = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+                val file = context.openFileOutput(fileName, Context.MODE_PRIVATE)
                 file.write(fileString.toByteArray())
                 file.flush()
                 file.close()

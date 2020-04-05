@@ -6,5 +6,5 @@
         android:color="#104"
         android:dashGap="1dp"
         android:dashWidth="4dp"/>
-    <solid android:color="#040"/>
+    <solid android:color="@color/main_blue"/>
 </shape>

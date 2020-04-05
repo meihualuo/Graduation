@@ -14,7 +14,7 @@ import com.example.mazigame.R
 import kotlin.math.abs
 
 
-class RssiRangeSeekBrd: AppCompatSeekBar{
+class MySeekBrd: AppCompatSeekBar{
 
     private val mThumbWidth = dp2px(35f)
     // 进度指示器宽度
@@ -108,6 +108,7 @@ class RssiRangeSeekBrd: AppCompatSeekBar{
 //                        val animator: ObjectAnimator = ObjectAnimator.ofFloat(this, "progress", 0f, 65f)
 //                        animator.start()
 //                        progress = it
+                        setProgressFloat(it.toFloat())
                         rssiRangeListener?.updateProgress(it)
                         isReturn = true
                     }

@@ -6,22 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".ui.NewGameActivity">
 
-    <TextView
-        style="@style/main_btn"
-        android:layout_above="@+id/new_game_pattern"
-        android:layout_centerHorizontal="true"
-        android:text="难度等级"/>
-
-    <TextView
-        android:id="@+id/new_game_pattern"
-        style="@style/main_btn"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="游戏模式" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/new_game_create"
-        style="@style/main_btn"
-        android:layout_below="@+id/new_game_pattern"
-        android:layout_centerHorizontal="true"
-        android:text="创建游戏"/>
+        <TextView
+            android:id="@+id/degree"
+            style="@style/main_btn"
+            android:text="@string/degree_int"/>
+
+        <com.example.mazigame.view.MySeekBrd
+            android:id="@+id/seek_brs"
+            style="@style/seek_bra_main"
+            android:max="100"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/new_game_pattern"
+            style="@style/main_btn"
+            android:text="游戏模式" />
+
+        <TextView
+            android:id="@+id/caozongfangshi"
+            style="@style/main_btn"
+            android:text="操纵方式" />
+
+        <TextView
+            android:id="@+id/new_game_create"
+            style="@style/main_btn"
+            android:text="创建游戏"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

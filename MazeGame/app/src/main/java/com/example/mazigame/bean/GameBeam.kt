@@ -8,10 +8,13 @@ class GameBeam {
     var duration:Long? = null
     var degree:Int? = null
     var type:String? = null
-    var map:Array<IntArray>? = null
     var people:CubeModel? = null
     var startTime:Long? = null
     var mMapModel:MapModel? = null
+
+
+
+
 
     //需要单例模式，不需要考虑内存，但要考虑线程安全,故采用饿汉式
     companion object{

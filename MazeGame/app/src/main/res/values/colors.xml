@@ -16,6 +16,7 @@
     <color name="white">#FFFFFF</color>
     <color name="back_gray">#ECEEF3</color>
     <color name="main_blue">#397CFF</color>
+    <color name="column_bk">#C68300</color>
     <color name="blue_click">#AAB8E0</color>
     <color name="line_gray">#d6d6d6</color>
     <color name="text_black">#323232</color>

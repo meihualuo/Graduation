@@ -1,5 +1,10 @@
 package com.example.mazigame.ui
 
+import android.annotation.SuppressLint
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
 import com.example.mazigame.R
@@ -8,11 +13,21 @@ import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
 import com.example.mazigame.presenter.PlayGamePresenter
 import kotlinx.android.synthetic.main.activity_play_game.*
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import java.lang.Math.abs
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
-class PlayGameActivity : BaseActivity(), View.OnClickListener, PlayGamePresenter.PlayGameLinstener {
+class PlayGameActivity : BaseActivity(), View.OnClickListener,
+    PlayGamePresenter.PlayGameLinstener,
+    SensorEventListener{
+    private lateinit var mSensorManage:SensorManager
+    private lateinit var mSensor:Sensor
 
     lateinit var mPresenter:PlayGamePresenter
 
+    @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         
         super.onCreate(savedInstanceState)
@@ -22,7 +37,13 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener, PlayGamePresenter
             it.onCreate(this,isContinution)
         }
 //        if(isContinution)
-//            mPresenter.onContinue()
+//            mPresenter.onContinue()0
+
+//        val aa = getSystemService(SEARCH_SERVICE)
+
+//        mSensorManage = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+//        mSensor = mSensorManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+//        listenerSensor()
 
     }
 
@@ -56,7 +77,20 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener, PlayGamePresenter
             archive -> {
                 mPresenter.saveArchive()
             }
+            show_map -> {
+                mPresenter.showMap()
+            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        mSensorManage.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_GAME)
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        mSensorManage.unregisterListener(this)
     }
 
     override fun updateView(mapModel: MapModel, people: CubeModel) {
@@ -73,6 +107,39 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener, PlayGamePresenter
 
     override fun dropOut() {
         finish()
+    }
+    var x = 0f
+    var y = 0f
+    //通过手机方向控制游戏方向
+    fun listenerSensor(){
+        Observable.interval(0,300,TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val threshold = 1.5f
+                if (x > threshold && abs(y)< 1){
+                    mPresenter.movePeople(MapModel.MOVE_OF_LEFT)
+                }
+                if (x < -threshold && abs(y)< 1){
+                    mPresenter.movePeople(MapModel.MOVE_OF_RIGHT)
+                }
+                if (y > threshold && abs(x)< 1){
+                    mPresenter.movePeople(MapModel.MOVE_OF_BOTTOM)
+                }
+                if (y < -threshold && abs(x)< 1){
+                    mPresenter.movePeople(MapModel.MOVE_OF_TOP)
+                }
+            }
+    }
+
+    //传感器获取值发生改变时调用此函数
+    override fun onSensorChanged(event: SensorEvent?) {
+        this.x = event?.values?.get(0) ?: 0f
+        this.y = event?.values?.get(1) ?: 0f
+//        val z = event?.values?.get(2)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
     }
 
 }
