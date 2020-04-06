@@ -12,6 +12,8 @@ class GameBeam {
     var startTime:Long? = null
     var mMapModel:MapModel? = null
 
+    var layers:Int = 1
+    var mMapModelList:MutableList<MapModel>? = null
 
 
 

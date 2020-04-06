@@ -1,7 +1,9 @@
 package com.example.mazigame.presenter
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
+import androidx.annotation.RequiresApi
 import com.example.mazigame.R
 import com.example.mazigame.base.MaterialDialog
 import com.example.mazigame.bean.GameBeam
@@ -15,6 +17,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.concurrent.ThreadLocalRandom
+import kotlin.random.Random
 
 class PlayGamePresenter {
     interface PlayGameLinstener {
@@ -35,7 +39,8 @@ class PlayGamePresenter {
         this.listener = listener
     }
 
-    fun onCreate(context: Context,oldGame: Boolean){
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    fun onCreate(context: Context, oldGame: Boolean){
         this.mContext = context
         GlobalScope.launch(Dispatchers.Main) {
             if (oldGame){
@@ -64,7 +69,25 @@ class PlayGamePresenter {
                 mMapModel = withContext(Dispatchers.IO){
                     return@withContext MapModel(GameBeam.getInstance().degree!!)
                 }
-                mMapModel?.setTerminal()
+                if(GameBeam.getInstance().type == StringUtil.TYPE_TRADITION)
+                    mMapModel?.setTerminal()
+                else{
+                    GameBeam.getInstance().mMapModelList = ArrayList()
+                    var random = ThreadLocalRandom.current()
+                    val x1 = random.nextInt(GameBeam.getInstance().degree!!)
+                    val y1 = random.nextInt(GameBeam.getInstance().degree!!)
+                    val x2 = random.nextInt(GameBeam.getInstance().degree!!)
+                    val y2 = random.nextInt(GameBeam.getInstance().degree!!)
+                    val cu1 = CubeModel(x1*2+1,y1*2+1)
+                    val cu2 = CubeModel(x2*2+1,y2*2+1)
+                    mMapModel!!.addStairOut(cu1)
+                    mMapModel!!.addStairOut(cu2)
+                    val mapModel2 = MapModel(GameBeam.getInstance().degree!!,cu1,cu2)
+                    mapModel2.setTerminal()
+                    GameBeam.getInstance().mMapModelList?.add(mMapModel!!)
+                    GameBeam.getInstance().mMapModelList?.add(mapModel2)
+                }
+
                 mPeople = CubeModel(1,1)
             }
             listener?.updateView(mMapModel!!, mPeople!!)
@@ -98,8 +121,25 @@ class PlayGamePresenter {
                 else return
         }
         listener?.movePeople(mPeople!!,direction)
-        if(mMapModel?.map!![mPeople?.weighe!!][mPeople?.heighe!!] == MapModel.TERMINAL)
-            onPass()
+        when(mMapModel?.map!![mPeople?.weighe!!][mPeople?.heighe!!]){
+            MapModel.TERMINAL ->  onPass()
+            MapModel.STAIR_OUT -> {
+                mMapModel = GameBeam.getInstance().mMapModelList?.get(1)
+                listener?.updateView(mMapModel!!, mPeople!!)
+                GameBeam.getInstance().let {
+                    it.mMapModel = mMapModel
+                    it.people = mPeople
+                }
+            }
+            MapModel.STAIR_IN -> {
+                mMapModel = GameBeam.getInstance().mMapModelList?.get(0)
+                listener?.updateView(mMapModel!!, mPeople!!)
+                GameBeam.getInstance().let {
+                    it.mMapModel = mMapModel
+                    it.people = mPeople
+                }
+            }
+        }
     }
 
     fun onPass(){

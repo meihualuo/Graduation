@@ -34,25 +34,28 @@ class ArchiveModel {
             map: String,
             people: String
         ) {
-            var jsonObjects = JSONObject().apply {
+            val formatter = SimpleDateFormat("yyyy-MM-dd:HH:mm")
+            val timeToStr = formatter.format(System.currentTimeMillis())
+            val jsonObjects = JSONObject().apply {
                 StringUtil.let {
                     put(it.KEY_DURATION, duration ?: 600000)
                     put(it.KEY_DEGREE, degree)
                     put(it.KEY_TYPE, type)
-                    put(it.KEY_MAP, map)
-                    val formatter = SimpleDateFormat("yyyy-MM-dd:HH:mm")
-                    put(it.KEY_TIME, formatter.format(System.currentTimeMillis()))
+//                    put(it.KEY_MAP, map)
+                    put(it.KEY_TIME, timeToStr)
                     put(it.KEY_PEOPLE, people)
                 }
             }
             val jsonText = readFile(context,StringUtil.FILE_ARCHIVE)
             val jsonObject:JSONObject
-            if (jsonText != null)
-                jsonObject = JSONObject(jsonText)
+            jsonObject = if (jsonText != null)
+                JSONObject(jsonText)
             else
-                jsonObject = JSONObject()
+                JSONObject()
+            jsonObject.accumulate(StringUtil.KEY_NAME_ALL,name)
             jsonObject.put(name,jsonObjects)
             saveFile(context, jsonObject.toString(), StringUtil.FILE_ARCHIVE)
+            saveFile(context,map,timeToStr)
         }
 
         fun saveSetUp(context: Context){

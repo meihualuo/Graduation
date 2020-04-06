@@ -44,6 +44,7 @@ class NewGameActivity : BaseActivity() , View.OnClickListener {
     override fun onClick(v: View?) {
         when(v){
             new_game_create -> {
+                GameBeam.getInstance().type = "other"
                 ArchiveModel.saveSetUp(this)
                 startActivity(PlayGameActivity::class.java)
             }

@@ -41,10 +41,10 @@ public class MapModel{
      public MapModel(int wide,CubeModel statr1,CubeModel statr2){
          this.wide = wide*2+1;
          init();
-         this.map[statr1.getWeighe()][statr1.getHeighe()] = STAIR_IN;
-         this.map[statr2.getWeighe()][statr2.getHeighe()] = STAIR_IN;
          addWaite(statr1.getWeighe(),statr1.getHeighe());
          addWaite(statr2.getWeighe(),statr2.getHeighe());
+         this.map[statr1.getWeighe()][statr1.getHeighe()] = STAIR_IN;
+         this.map[statr2.getWeighe()][statr2.getHeighe()] = STAIR_IN;
          initColumn();
      }
 
@@ -141,6 +141,18 @@ public class MapModel{
                          result.append( "C");
                          break;
                      }
+                     case TERMINAL:{
+                         result.append( "T");
+                         break;
+                     }
+                     case STAIR_IN:{
+                         result.append( "I");
+                         break;
+                     }
+                     case STAIR_OUT:{
+                         result.append( "O");
+                         break;
+                     }
                      default:{
                          result.append( "X");
                      }
@@ -164,6 +176,18 @@ public class MapModel{
                     }
                     case 'C':{
                         map[i][j] = COLUMN;
+                        break;
+                    }
+                    case 'T':{
+                        map[i][j] = TERMINAL;
+                        break;
+                    }
+                    case 'I':{
+                        map[i][j] = STAIR_IN;
+                        break;
+                    }
+                    case 'O':{
+                        map[i][j] = STAIR_OUT;
                         break;
                     }
                 }

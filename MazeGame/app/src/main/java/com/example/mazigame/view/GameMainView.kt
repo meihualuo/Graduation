@@ -6,10 +6,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.os.Build
 import android.util.AttributeSet
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.core.graphics.toRectF
 import com.example.mazigame.R
 import com.example.mazigame.model.CubeModel
@@ -21,6 +19,7 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
     val TAG = "GameMainView"
     private var columnPaint = Paint()
     private var peoplePaint = Paint()
+    private var stairPaint = Paint()
     private lateinit var mapModel: MapModel
     private var map:Array<IntArray>? = null
     private lateinit var people: CubeModel
@@ -33,6 +32,7 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
 
     init {
         columnPaint.color = mContext.getColor(R.color.column_bk)
+        stairPaint.color = mContext.getColor(R.color.Loading_color)
         peoplePaint.color = Color.RED
         wallSide = DensityUtil.dip2px(mContext,20f)
     }
@@ -147,8 +147,11 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
         canvas?.translate(marginLeft, marginTop)
         for (i in leftPos..rightPos){
             for(j in topPos..bottomPos){
-                if(map!![i][j] == MapModel.COLUMN){
-                    canvas?.drawRect(rect(i,j,wallSide!!),columnPaint)
+                when(map!![i][j]){
+                    MapModel.COLUMN ->
+                        canvas?.drawRect(rect(i,j,wallSide!!),columnPaint)
+                    MapModel.STAIR_OUT,MapModel.STAIR_IN ->
+                        canvas?.drawRect(rect(i,j,wallSide!!),stairPaint)
                 }
             }
         }
