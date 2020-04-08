@@ -2,10 +2,7 @@ package com.example.mazigame.view
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.toRectF
@@ -20,6 +17,7 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
     private var columnPaint = Paint()
     private var peoplePaint = Paint()
     private var stairPaint = Paint()
+    private var terminalPaint = Paint()
     private lateinit var mapModel: MapModel
     private var map:Array<IntArray>? = null
     private lateinit var people: CubeModel
@@ -33,6 +31,7 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
     init {
         columnPaint.color = mContext.getColor(R.color.column_bk)
         stairPaint.color = mContext.getColor(R.color.Loading_color)
+        terminalPaint.color = mContext.getColor(R.color.main_blue)
         peoplePaint.color = Color.RED
         wallSide = DensityUtil.dip2px(mContext,20f)
     }
@@ -121,9 +120,9 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
 
         }
         val peopleRect= { x:Int, y:Int, wallSide:Int ->
-            var hor = (x%2 )*(wallSide)/2
-            var ver = (y%2 )*(wallSide)/2
-            Rect(wallSide*x-hor+peoHorPad.toInt(),
+            var hor = (x%2 )*(wallSide)/2f
+            var ver = (y%2 )*(wallSide)/2f
+            RectF(wallSide*x-hor+peoHorPad.toInt(),
                 wallSide*y-ver+peoVerPad.toInt(),
                 wallSide*x+hor+peoHorPad.toInt(),
                 wallSide*y+ver+peoVerPad.toInt()
@@ -152,12 +151,14 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
                         canvas?.drawRect(rect(i,j,wallSide!!),columnPaint)
                     MapModel.STAIR_OUT,MapModel.STAIR_IN ->
                         canvas?.drawRect(rect(i,j,wallSide!!),stairPaint)
+                    MapModel.TERMINAL ->
+                        canvas?.drawRect(rect(i,j,wallSide!!),terminalPaint)
                 }
             }
         }
         //绘制人物
 //        canvas?.drawRect(peopleRect(people.weighe,people.heighe,wallSide!!),peoplePaint)
-        canvas?.drawArc(peopleRect(people.weighe,people.heighe,wallSide!!).toRectF(),0f,360f,true,peoplePaint)
+        canvas?.drawArc(peopleRect(people.weighe,people.heighe,wallSide!!),0f,360f,true,peoplePaint)
         var rodeRect = {x:Int,y:Int,w:Int ->
             Rect(x*w-8,y*w-8,x*w+8,y*w+8)
         }

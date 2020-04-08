@@ -24,10 +24,11 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
     SensorEventListener{
     private lateinit var mSensorManage:SensorManager
     private lateinit var mSensor:Sensor
+    var x = 0f
+    var y = 0f
 
     lateinit var mPresenter:PlayGamePresenter
 
-    @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         
         super.onCreate(savedInstanceState)
@@ -108,8 +109,6 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
     override fun dropOut() {
         finish()
     }
-    var x = 0f
-    var y = 0f
     //通过手机方向控制游戏方向
     fun listenerSensor(){
         Observable.interval(0,300,TimeUnit.MILLISECONDS)

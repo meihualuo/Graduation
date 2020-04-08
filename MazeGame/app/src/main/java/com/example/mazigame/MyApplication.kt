@@ -8,8 +8,8 @@ import org.json.JSONObject
 
 class MyApplication: Application() {
 
-    companion object{
-        private lateinit var instance:MyApplication
+    companion object {
+        lateinit var instance:MyApplication
         fun getApplication():MyApplication{
             return instance
         }

@@ -1,6 +1,7 @@
 package com.example.mazigame.model
 
 import android.content.Context
+import com.example.mazigame.MyApplication
 import com.example.mazigame.bean.GameBeam
 import com.example.mazigame.util.StringUtil
 import org.json.JSONArray
@@ -13,21 +14,35 @@ class ArchiveModel {
     companion object {
         fun setDatas(context: Context) {
             GameBeam.getInstance().let {
-                val name = it.name
+                val name = it.name ?: "moren"
                 val duration = (it.duration ?: 0) + abs(it.startTime!! - System.currentTimeMillis())
                 it.startTime = System.currentTimeMillis()
                 val degree = it.degree
                 val type = it.type
-                val map = MapModel.mapToString(it.mMapModel!!.map)
+
+                var map:String = ""
+                when(it.type){
+                    StringUtil.TYPE_TRADITION -> {
+                        map = MapModel.mapToString(it.mMapModel!!.map)
+                    }
+                    StringUtil.TYPE_MULTI_LAYER -> {
+                        map = MapModel.mapListToString(it.mMapModelList)
+                    }
+                }
+                MyApplication.getApplication()
                 val people =
                     it.people?.weighe.toString() + "-" + it.people?.heighe.toString()
                 setDatas(context, name, duration, degree, type, map, people)
             }
         }
 
+        fun saveScore(context: Context){
+
+        }
+
         fun setDatas(
             context: Context,
-            name: String?,
+            name: String,
             duration: Long?,
             degree: Int?,
             type: String?,
@@ -36,7 +51,7 @@ class ArchiveModel {
         ) {
             val formatter = SimpleDateFormat("yyyy-MM-dd:HH:mm")
             val timeToStr = formatter.format(System.currentTimeMillis())
-            val jsonObjects = JSONObject().apply {
+            val jsonObject = JSONObject().apply {
                 StringUtil.let {
                     put(it.KEY_DURATION, duration ?: 600000)
                     put(it.KEY_DEGREE, degree)
@@ -47,15 +62,18 @@ class ArchiveModel {
                 }
             }
             val jsonText = readFile(context,StringUtil.FILE_ARCHIVE)
-            val jsonObject:JSONObject
-            jsonObject = if (jsonText != null)
+            val allObject:JSONObject
+            allObject = if (jsonText != null)
                 JSONObject(jsonText)
             else
                 JSONObject()
-            jsonObject.accumulate(StringUtil.KEY_NAME_ALL,name)
-            jsonObject.put(name,jsonObjects)
-            saveFile(context, jsonObject.toString(), StringUtil.FILE_ARCHIVE)
-            saveFile(context,map,timeToStr)
+//            jsonObject.accumulate(StringUtil.KEY_NAME_ALL,name)
+
+
+            allObject.put(name,jsonObject)
+            allObject.put(StringUtil.KEY_NEWEST,name)
+            saveFile(context, allObject.toString(), StringUtil.FILE_ARCHIVE)
+            saveFile(context,map,name)
         }
 
         fun saveSetUp(context: Context){

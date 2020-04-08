@@ -126,6 +126,26 @@ public class MapModel{
          if(hori+1<wide)if (map[hori+1][vert] == WAIT) waits.add(new CubeModel(hori+1,vert));
     }
 
+    public static String mapListToString(List<MapModel> list){
+        StringBuilder result = new StringBuilder();
+        for (int i =0 ;i<list.size();i++){
+            result.append(mapToString(list.get(i).map));
+            result.append("M");
+        }
+        return result.toString();
+    }
+
+    public static List<MapModel> stringToMapList(String strMap){
+        List<MapModel> list = new ArrayList();
+        String[] strList = strMap.split("M");
+        for (int i=0;i<strList.length;i++){
+            int[][] map = stringToMap(strList[i]);
+            MapModel mapModel = new MapModel(map);
+            list.add(mapModel);
+        }
+        return list;
+    }
+
     public static String mapToString(int[][] map){
          StringBuilder result = new StringBuilder();
          if(map == null)

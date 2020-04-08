@@ -9,12 +9,13 @@ class StringUtil {
         val KEY_MAP = "map"
         val KEY_TIME = "time"
         val KEY_PEOPLE = "people"
-        val KEY_NAME_ALL = "_A-L-L_N-A-M-E_"
+        val KEY_NEWEST = "newest"
 
         val TYPE_TRADITION = "tradition"
-        val TYPE_MULTI_LAYER = "tradition"
+        val TYPE_MULTI_LAYER = "multi_layer"
 
         val FILE_ARCHIVE = "archive_datas.txt"
         val FILE_SET_UP = "set_up.txt"
+        val FILE_SCORE = "score.txt"
     }
 }

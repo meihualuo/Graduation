@@ -2,10 +2,7 @@ package com.example.mazigame.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.hardware.biometrics.BiometricPrompt
 import android.util.AttributeSet
 import android.util.Log
@@ -98,9 +95,9 @@ class MazeView : View {
 
         }
         val peopleRect= { x:Int, y:Int, wallSide:Int ->
-            val hor = (x%2 )*(wallSide)/2
-            val ver = (y%2 )*(wallSide)/2
-            Rect(wallSide*x-hor,
+            val hor = (x%2 )*(wallSide)/2f
+            val ver = (y%2 )*(wallSide)/2f
+            RectF(wallSide*x-hor,
                 wallSide*y-ver,
                 wallSide*x+hor,
                 wallSide*y+ver
@@ -125,7 +122,7 @@ class MazeView : View {
         }
         //绘制人物
 //        canvas?.drawRect(rect(people.weighe,people.heighe,wallSide!!),peoplePaint)
-        canvas?.drawArc(peopleRect(people.weighe,people.heighe,wallSide!!).toRectF(),0f,360f,true,peoplePaint)
+        canvas?.drawArc(peopleRect(people.weighe,people.heighe,wallSide),0f,360f,true,peoplePaint)
         var rodeRect = {x:Int,y:Int,w:Int ->
             Rect(x*w-4,y*w-4,x*w+4,y*w+4)
         }

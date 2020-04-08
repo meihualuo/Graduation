@@ -3,6 +3,7 @@ package com.example.mazigame.presenter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
+import android.widget.EditText
 import androidx.annotation.RequiresApi
 import com.example.mazigame.R
 import com.example.mazigame.base.MaterialDialog
@@ -18,7 +19,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.random.Random
 
 class PlayGamePresenter {
     interface PlayGameLinstener {
@@ -33,6 +33,7 @@ class PlayGamePresenter {
     var mMapModel:MapModel? = null
     var mPeople:CubeModel? = null
     var mMapDialog:MaterialDialog? = null
+    var mDataDialog:MaterialDialog? = null
     var mapView:MazeView? = null
 
     fun setListener(listener: PlayGameLinstener){
@@ -47,47 +48,35 @@ class PlayGamePresenter {
                 val archiveText = ArchiveModel.readFile(mContext!!, StringUtil.FILE_ARCHIVE)
                 if (archiveText != null) {
                     withContext(Dispatchers.IO) {
-                        val jsonObjectA = JSONObject(archiveText)
-                        val jsonG = jsonObjectA.getJSONObject(GameBeam.getInstance().name)
-                        val map: String = jsonG.getString(StringUtil.KEY_MAP)
-                        val mapA= MapModel.stringToMap(map)
-                        mMapModel = MapModel(mapA)
-                        val ps = jsonG.getString(StringUtil.KEY_PEOPLE)
-                        val psToArray = ps.split("-")
-                        mPeople = CubeModel(psToArray[0].toInt(), psToArray[1].toInt())
+                        val allObjectA = JSONObject(archiveText)
+                        val jsonG = allObjectA.getJSONObject(allObjectA.getString(StringUtil.KEY_NEWEST))
                         GameBeam.getInstance().let {
 //                            it.mMapModel = mMapModel
 //                            it.people = mPeople
                             it.degree = jsonG.getInt(StringUtil.KEY_DEGREE)
                             it.type = jsonG.getString(StringUtil.KEY_TYPE)
                             it.duration = jsonG.getLong(StringUtil.KEY_DURATION)
+                            val map = ArchiveModel.readFile(mContext!!,allObjectA.getString(StringUtil.KEY_NEWEST))
+                            when(it.type){
+                                StringUtil.TYPE_TRADITION -> {
+                                    val mapA= MapModel.stringToMap(map)
+                                    mMapModel = MapModel(mapA)
+                                }
+                                StringUtil.TYPE_MULTI_LAYER -> {
+                                    val mapA= MapModel.stringToMapList(map)
+                                    it.mMapModelList = mapA
+                                    mMapModel = mapA[0]
+                                }
+                            }
                         }
+                        val ps = jsonG.getString(StringUtil.KEY_PEOPLE)
+                        val psToArray = ps.split("-")
+                        mPeople = CubeModel(psToArray[0].toInt(), psToArray[1].toInt())
                         ArchiveModel.saveSetUp(mContext!!)
                     }
                 }
             }else{
-                mMapModel = withContext(Dispatchers.IO){
-                    return@withContext MapModel(GameBeam.getInstance().degree!!)
-                }
-                if(GameBeam.getInstance().type == StringUtil.TYPE_TRADITION)
-                    mMapModel?.setTerminal()
-                else{
-                    GameBeam.getInstance().mMapModelList = ArrayList()
-                    var random = ThreadLocalRandom.current()
-                    val x1 = random.nextInt(GameBeam.getInstance().degree!!)
-                    val y1 = random.nextInt(GameBeam.getInstance().degree!!)
-                    val x2 = random.nextInt(GameBeam.getInstance().degree!!)
-                    val y2 = random.nextInt(GameBeam.getInstance().degree!!)
-                    val cu1 = CubeModel(x1*2+1,y1*2+1)
-                    val cu2 = CubeModel(x2*2+1,y2*2+1)
-                    mMapModel!!.addStairOut(cu1)
-                    mMapModel!!.addStairOut(cu2)
-                    val mapModel2 = MapModel(GameBeam.getInstance().degree!!,cu1,cu2)
-                    mapModel2.setTerminal()
-                    GameBeam.getInstance().mMapModelList?.add(mMapModel!!)
-                    GameBeam.getInstance().mMapModelList?.add(mapModel2)
-                }
-
+                creatMap()
                 mPeople = CubeModel(1,1)
             }
             listener?.updateView(mMapModel!!, mPeople!!)
@@ -143,22 +132,47 @@ class PlayGamePresenter {
     }
 
     fun onPass(){
-
         GlobalScope.launch(Dispatchers.Main) {
-            mMapModel = withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO){
                 GameBeam.getInstance().degreeAdd()
                 ArchiveModel.saveSetUp(mContext!!)
                 Thread.sleep(500)
-                return@withContext MapModel(GameBeam.getInstance().degree!!)
             }
+            creatMap()
             mMapModel?.setTerminal()
             mPeople = CubeModel(1,1)
             listener?.updateView(mMapModel!!,mPeople!!)
             GameBeam.getInstance().let {
                 it.mMapModel = mMapModel
                 it.people = mPeople
+                it.startTime = System.currentTimeMillis()
             }
         }
+    }
+
+    suspend fun creatMap():MapModel{
+        mMapModel = withContext(Dispatchers.IO){
+            return@withContext MapModel(GameBeam.getInstance().degree!!)
+        }
+        if(GameBeam.getInstance().type == StringUtil.TYPE_TRADITION)
+            mMapModel?.setTerminal()
+        else{
+            GameBeam.getInstance().mMapModelList = ArrayList()
+            var random = ThreadLocalRandom.current()
+            val x1 = random.nextInt(GameBeam.getInstance().degree!!)
+            val y1 = random.nextInt(GameBeam.getInstance().degree!!)
+            val x2 = random.nextInt(GameBeam.getInstance().degree!!)
+            val y2 = random.nextInt(GameBeam.getInstance().degree!!)
+            val cu1 = CubeModel(x1*2+1,y1*2+1)
+            val cu2 = CubeModel(x2*2+1,y2*2+1)
+            mMapModel!!.addStairOut(cu1)
+            mMapModel!!.addStairOut(cu2)
+            val mapModel2 = MapModel(GameBeam.getInstance().degree!!,cu1,cu2)
+            mapModel2.setTerminal()
+            GameBeam.getInstance().mMapModelList?.add(mMapModel!!)
+            GameBeam.getInstance().mMapModelList?.add(mapModel2)
+        }
+        return this.mMapModel!!
     }
 
     fun prompRoad(){
@@ -168,19 +182,35 @@ class PlayGamePresenter {
 
             val roadList:List<CubeModel> = ArrayList()
             val nowCube = CubeModel(mMapModel!!.wide-2,mMapModel!!.wide-2)
-            val isPrompt = withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO){
                 return@withContext MapModel.promptRoad(mMapModel!!.map, roadList, mPeople, nowCube)
             }
-//            if (isPrompt!!){
-//                listener?.showPrompRoad(roadList)
-//            }
             showMap()
             mapView?.setPrompt(true,roadList)
         }
     }
 
     fun saveArchive(){
-        ArchiveModel.setDatas(mContext!!)
+//        ArchiveModel.setDatas(mContext!!)
+        if (mDataDialog != null){
+            mDataDialog?.show()
+            return
+        }
+        mDataDialog = MaterialDialog(mContext)
+        val view = LayoutInflater.from(mContext).inflate(R.layout.save_data_item,null)
+        val edit = view.findViewById<EditText>(R.id.edit)
+        mDataDialog?.setView(view)
+        mDataDialog?.setCanceledOnTouchOutside(false)
+        mDataDialog?.setPositiveButton("保存") {
+            val text = edit.text.toString()
+            if(!(text.isEmpty() || text == "")){
+                GameBeam.getInstance().name = text
+                ArchiveModel.setDatas(mContext!!)
+                mDataDialog?.cancel()
+            }
+        }
+        mDataDialog?.setNegativeButton("取消",null)
+        mDataDialog?.show()
     }
 
     fun showMap(){
