@@ -2,6 +2,7 @@ package com.example.mazigame.bean
 
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
+import com.example.mazigame.util.StringUtil
 
 class GameBeam {
     var name:String? = null
@@ -11,6 +12,7 @@ class GameBeam {
     var people:CubeModel? = null
     var startTime:Long? = null
     var mMapModel:MapModel? = null
+    var manipulation:String = StringUtil.MANI_TYPE_BOARD
 
     var layers:Int = 1
     var mMapModelList:MutableList<MapModel>? = null

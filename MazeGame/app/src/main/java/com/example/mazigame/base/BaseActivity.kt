@@ -4,6 +4,9 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 
 /**
  * 自定义所有活动的父类，方便后期调整风格等统一属性
@@ -19,6 +22,15 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun startActivity(actClass: Class<*>){
         startActivity(Intent(this,actClass))
+    }
+
+
+    open fun setLinearLayoutManager(recyclerView: RecyclerView): LinearLayoutManager? {
+        val manager: LinearLayoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = manager
+        (recyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations = false
+        return manager
     }
 
 }

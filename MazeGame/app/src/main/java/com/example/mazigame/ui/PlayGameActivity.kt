@@ -1,6 +1,7 @@
 package com.example.mazigame.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -9,9 +10,11 @@ import android.os.Bundle
 import android.view.View
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
+import com.example.mazigame.bean.GameBeam
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
 import com.example.mazigame.presenter.PlayGamePresenter
+import com.example.mazigame.util.StringUtil
 import kotlinx.android.synthetic.main.activity_play_game.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,9 +45,9 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
 
 //        val aa = getSystemService(SEARCH_SERVICE)
 
-//        mSensorManage = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-//        mSensor = mSensorManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-//        listenerSensor()
+        mSensorManage = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensor = mSensorManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
 
     }
 
@@ -81,17 +84,27 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
             show_map -> {
                 mPresenter.showMap()
             }
+            stair -> {
+                mPresenter.clickStair()
+            }
         }
+    }
+
+    override fun setStair(visi:Int){
+        stair.visibility = visi
     }
 
     override fun onResume() {
         super.onResume()
-//        mSensorManage.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_GAME)
+        if(GameBeam.getInstance().manipulation == StringUtil.MANI_TYPE_GRAVITY){
+            mSensorManage.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_GAME)
+            listenerSensor()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-//        mSensorManage.unregisterListener(this)
+        mSensorManage.unregisterListener(this)
     }
 
     override fun updateView(mapModel: MapModel, people: CubeModel) {

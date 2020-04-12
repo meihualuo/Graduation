@@ -21,6 +21,9 @@
     <color name="line_gray">#d6d6d6</color>
     <color name="text_black">#323232</color>
     <color name="alpha_white_66">#66ffffff</color>
+    <color name="ff_gray">#949494</color>
+
+    <color name="text_main">#000000</color>
 
     <color name="Loading_color">#88000000</color>
 

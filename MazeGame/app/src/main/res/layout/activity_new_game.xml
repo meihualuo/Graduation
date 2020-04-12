@@ -30,7 +30,7 @@
             android:text="游戏模式" />
 
         <TextView
-            android:id="@+id/caozongfangshi"
+            android:id="@+id/manipulation"
             style="@style/main_btn"
             android:text="操纵方式" />
 

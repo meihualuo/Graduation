@@ -95,4 +95,17 @@
         <item name="android:minHeight">10dp</item>
     </style>
 
+
+    <style name="editText">
+    <item name="android:textColor">@color/text_black</item>
+    <item name="android:textSize">@dimen/text_m</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:maxLines">1</item>
+    <item name="android:background">@drawable/shape_edit</item>
+    <item name="android:paddingLeft">5dp</item>
+    <item name="android:textColorHint">@color/ff_gray</item>
+    <item name="android:layout_height">@dimen/item_height_m</item>
+
+    </style>
+
 </resources>

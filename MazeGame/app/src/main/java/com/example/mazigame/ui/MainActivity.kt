@@ -47,6 +47,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 intent.putExtra("jixuyouxi",true)
                 startActivity(intent)
             }
+            main_archive -> startActivity(ArchiveActivity::class.java)
+            main_score -> startActivity(HisScoreActivity::class.java)
         }
     }
 }

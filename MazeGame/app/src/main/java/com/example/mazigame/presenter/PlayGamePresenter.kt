@@ -3,7 +3,9 @@ package com.example.mazigame.presenter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.mazigame.R
 import com.example.mazigame.base.MaterialDialog
@@ -11,14 +13,18 @@ import com.example.mazigame.bean.GameBeam
 import com.example.mazigame.model.ArchiveModel
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
+import com.example.mazigame.util.MapUtil
 import com.example.mazigame.util.StringUtil
 import com.example.mazigame.view.MazeView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.math.abs
 
 class PlayGamePresenter {
     interface PlayGameLinstener {
@@ -26,6 +32,7 @@ class PlayGamePresenter {
         fun movePeople(people:CubeModel,direction: Int)
         fun showPrompRoad(list:List<CubeModel>)
         fun dropOut()
+        fun setStair(visi:Int)
     }
 
     private var listener: PlayGameLinstener? = null
@@ -59,12 +66,12 @@ class PlayGamePresenter {
                             val map = ArchiveModel.readFile(mContext!!,allObjectA.getString(StringUtil.KEY_NEWEST))
                             when(it.type){
                                 StringUtil.TYPE_TRADITION -> {
-                                    val mapA= MapModel.stringToMap(map)
+                                    val mapA= MapUtil.stringToMap(map!!)
                                     mMapModel = MapModel(mapA)
                                 }
                                 StringUtil.TYPE_MULTI_LAYER -> {
-                                    val mapA= MapModel.stringToMapList(map)
-                                    it.mMapModelList = mapA
+                                    val mapA= MapUtil.stringToMapList(map!!)
+                                    it.mMapModelList = mapA as MutableList<MapModel>
                                     mMapModel = mapA[0]
                                 }
                             }
@@ -111,7 +118,14 @@ class PlayGamePresenter {
         }
         listener?.movePeople(mPeople!!,direction)
         when(mMapModel?.map!![mPeople?.weighe!!][mPeople?.heighe!!]){
-            MapModel.TERMINAL ->  onPass()
+            MapModel.TERMINAL ->  saveScore()
+            MapModel.STAIR_OUT,MapModel.STAIR_IN  -> listener?.setStair(View.VISIBLE)
+            else ->  listener?.setStair(View.GONE)
+        }
+    }
+
+    fun clickStair(){
+        when(mMapModel?.map!![mPeople?.weighe!!][mPeople?.heighe!!]) {
             MapModel.STAIR_OUT -> {
                 mMapModel = GameBeam.getInstance().mMapModelList?.get(1)
                 listener?.updateView(mMapModel!!, mPeople!!)
@@ -132,6 +146,7 @@ class PlayGamePresenter {
     }
 
     fun onPass(){
+//        val passDialog = MaterialDialog(mContext)
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO){
                 GameBeam.getInstance().degreeAdd()
@@ -171,6 +186,7 @@ class PlayGamePresenter {
             mapModel2.setTerminal()
             GameBeam.getInstance().mMapModelList?.add(mMapModel!!)
             GameBeam.getInstance().mMapModelList?.add(mapModel2)
+            GameBeam.getInstance().duration = 0
         }
         return this.mMapModel!!
     }
@@ -180,14 +196,49 @@ class PlayGamePresenter {
             return
         GlobalScope.launch(Dispatchers.Main) {
 
-            val roadList:List<CubeModel> = ArrayList()
+            val roadList:MutableList<CubeModel> = ArrayList()
             val nowCube = CubeModel(mMapModel!!.wide-2,mMapModel!!.wide-2)
             withContext(Dispatchers.IO){
-                return@withContext MapModel.promptRoad(mMapModel!!.map, roadList, mPeople, nowCube)
+                return@withContext MapUtil.promptRoad(mMapModel!!.map, roadList, mPeople!!, nowCube)
             }
             showMap()
             mapView?.setPrompt(true,roadList)
         }
+    }
+
+    fun saveScore(){
+        //计算得分
+        val duration = (GameBeam.getInstance().duration ?: 0) + abs(GameBeam.getInstance().startTime!! - System.currentTimeMillis())
+        val score = (60*1000)*(GameBeam.getInstance().degree!!)*4/duration
+        val sorceDialog = MaterialDialog(mContext)
+        val view = LayoutInflater.from(mContext).inflate(R.layout.save_data_item,null)
+        val edit = view.findViewById<EditText>(R.id.edit)
+        val title = view.findViewById<TextView>(R.id.title)
+        title.text = "得分：$score \n 请输入名称"
+        sorceDialog.setView(view)
+        sorceDialog.setPositiveButton("保存得分"){
+            val text = edit.text.toString()
+            if(!(text.isEmpty() || text == "")){
+                val jsonObject = JSONObject()
+                val formatter = SimpleDateFormat("yyyy-MM-dd:HH:mm")
+                val timeToStr = formatter.format(System.currentTimeMillis())
+                jsonObject.put(StringUtil.KEY_NAME,text)
+                jsonObject.put(StringUtil.KEY_SCORE,score)
+                jsonObject.put(StringUtil.KEY_TIME,timeToStr)
+                val jsonText = ArchiveModel.readFile(mContext!!, StringUtil.FILE_SCORE)
+                val oldJson:JSONArray
+                oldJson = if (jsonText != null)
+                    JSONArray(jsonText)
+                else
+                    JSONArray()
+                oldJson.put(jsonObject)
+                ArchiveModel.saveFile(mContext!!,oldJson.toString(),StringUtil.FILE_SCORE)
+                onPass()
+                sorceDialog.cancel()
+            }
+        }
+        sorceDialog.setNegativeButton("不保存",null)
+        sorceDialog.show()
     }
 
     fun saveArchive(){
@@ -198,7 +249,9 @@ class PlayGamePresenter {
         }
         mDataDialog = MaterialDialog(mContext)
         val view = LayoutInflater.from(mContext).inflate(R.layout.save_data_item,null)
+        val title = view.findViewById<TextView>(R.id.title)
         val edit = view.findViewById<EditText>(R.id.edit)
+        title.text = "保存游戏"
         mDataDialog?.setView(view)
         mDataDialog?.setCanceledOnTouchOutside(false)
         mDataDialog?.setPositiveButton("保存") {

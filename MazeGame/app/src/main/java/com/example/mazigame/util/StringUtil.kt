@@ -10,6 +10,11 @@ class StringUtil {
         val KEY_TIME = "time"
         val KEY_PEOPLE = "people"
         val KEY_NEWEST = "newest"
+        val KEY_SCORE = "score"
+        val KEY_MANIPULATION = "manipulation"
+
+        val MANI_TYPE_BOARD = "keyboard"
+        val MANI_TYPE_GRAVITY = "gravity"
 
         val TYPE_TRADITION = "tradition"
         val TYPE_MULTI_LAYER = "multi_layer"

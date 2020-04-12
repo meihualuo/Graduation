@@ -3,6 +3,7 @@ package com.example.mazigame.model
 import android.content.Context
 import com.example.mazigame.MyApplication
 import com.example.mazigame.bean.GameBeam
+import com.example.mazigame.util.MapUtil
 import com.example.mazigame.util.StringUtil
 import org.json.JSONArray
 import org.json.JSONObject
@@ -23,10 +24,10 @@ class ArchiveModel {
                 var map:String = ""
                 when(it.type){
                     StringUtil.TYPE_TRADITION -> {
-                        map = MapModel.mapToString(it.mMapModel!!.map)
+                        map = MapUtil.mapToString(it.mMapModel!!.map)!!
                     }
                     StringUtil.TYPE_MULTI_LAYER -> {
-                        map = MapModel.mapListToString(it.mMapModelList)
+                        map = MapUtil.mapListToString(it.mMapModelList!!)!!
                     }
                 }
                 MyApplication.getApplication()

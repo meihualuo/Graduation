@@ -5,13 +5,19 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/text_main"
+        android:gravity="center"
+        android:padding="10dp"
         android:text="请输入存档名" />
 
     <EditText
         android:id="@+id/edit"
+        style="@style/editText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="40dp" />
 
 </LinearLayout>
