@@ -10,8 +10,10 @@
         android:roundIcon="@drawable/ic_nongming"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.HisScoreActivity"></activity>
-        <activity android:name=".ui.ArchiveActivity" />
+        <activity android:name=".ui.HisScoreActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ui.ArchiveActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.PlayGameActivity"
             android:theme="@style/AppTheme.NoActionBar" />

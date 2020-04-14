@@ -34,7 +34,7 @@ class ArchiveActivity : BaseActivity() {
         setLinearLayoutManager(recycler)
         val divider = RecycleViewDivider(
             this,
-            LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.line_gray)
+            LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.colorAccent)
         )
         divider.left = DensityUtil.dip2px(this,15f)
         recycler.addItemDecoration(divider)
