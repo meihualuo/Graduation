@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.abs
+import kotlin.math.pow
 
 class PlayGamePresenter {
     interface PlayGameLinstener {
@@ -217,7 +218,7 @@ class PlayGamePresenter {
     fun saveScore(){
         //计算得分
         val duration = (GameBeam.getInstance().duration ?: 0) + abs(GameBeam.getInstance().startTime!! - System.currentTimeMillis())
-        val score = (60*1000)*(GameBeam.getInstance().degree!!)*4/duration
+        val score = (60*1000)* GameBeam.getInstance().degree!!.toDouble().pow(2).toInt() *4/duration
         val sorceDialog = MaterialDialog(mContext)
         val view = LayoutInflater.from(mContext).inflate(R.layout.save_data_item,null)
         val edit = view.findViewById<EditText>(R.id.edit)
@@ -227,7 +228,7 @@ class PlayGamePresenter {
         sorceDialog.setPositiveButton("保存得分"){
             val text = edit.text.toString()
             if(!(text.isEmpty() || text == "")){
-                val jsonObject = JSONObject()
+                var jsonObject = JSONObject()
                 val formatter = SimpleDateFormat("yyyy-MM-dd:HH:mm")
                 val timeToStr = formatter.format(System.currentTimeMillis())
                 jsonObject.put(StringUtil.KEY_NAME,text)
@@ -235,11 +236,23 @@ class PlayGamePresenter {
                 jsonObject.put(StringUtil.KEY_TIME,timeToStr)
                 val jsonText = ArchiveUtil.readFile(mContext!!, StringUtil.FILE_SCORE)
                 val oldJson:JSONArray
-                oldJson = if (jsonText != null)
-                    JSONArray(jsonText)
-                else
-                    JSONArray()
-                oldJson.put(jsonObject)
+                if (jsonText != null) {
+                    oldJson = JSONArray(jsonText)
+                    val len = oldJson.length()
+                    var isput = false
+                    for(i in 0 until len){
+                        val ob = oldJson.getJSONObject(i)
+                        if(ob.getInt(StringUtil.KEY_SCORE) < score){
+                            var oo = oldJson.getJSONObject(i)
+                            oldJson.put(i,jsonObject)
+                            jsonObject = oo
+                        }
+                    }
+                    oldJson.put(jsonObject)
+                }else {
+                    oldJson = JSONArray()
+                    oldJson.put(jsonObject)
+                }
                 ArchiveUtil.saveFile(mContext!!,oldJson.toString(),StringUtil.FILE_SCORE)
                 onPass()
                 sorceDialog.cancel()

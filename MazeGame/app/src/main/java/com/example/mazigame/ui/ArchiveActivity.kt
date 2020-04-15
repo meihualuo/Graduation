@@ -73,6 +73,7 @@ class ArchiveActivity : BaseActivity() {
                     intent.putExtra("jixuyouxi",true)
                     startActivity(intent)
                     cancel()
+                    finish()
                 }
                 setNegativeButton("取消",null)
             }

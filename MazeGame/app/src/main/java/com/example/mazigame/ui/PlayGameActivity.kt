@@ -160,7 +160,7 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
 
     override fun onBackPressed() {
         if (System.currentTimeMillis() - exitTime > 2000){
-            Toast.makeText(this,"再按一次退出游戏",Toast.LENGTH_SHORT)
+            Toast.makeText(this,"再按一次退出游戏",Toast.LENGTH_SHORT).show()
             exitTime = System.currentTimeMillis()
         } else{
             MaterialDialog(this).apply {
