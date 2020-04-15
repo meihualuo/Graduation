@@ -8,8 +8,10 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
+import com.example.mazigame.base.MaterialDialog
 import com.example.mazigame.bean.GameBeam
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
@@ -27,6 +29,7 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
     SensorEventListener{
     private lateinit var mSensorManage:SensorManager
     private lateinit var mSensor:Sensor
+    private var exitTime:Long = 0
     var x = 0f
     var y = 0f
 
@@ -151,6 +154,24 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
+    }
+
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() - exitTime > 2000){
+            Toast.makeText(this,"再按一次退出游戏",Toast.LENGTH_SHORT)
+            exitTime = System.currentTimeMillis()
+        } else{
+            MaterialDialog(this).apply {
+                setTitle("退出游戏")
+                setMessage("未保存的游戏数据将会丢失，确定退出吗？")
+                setPositiveButton("确定退出"){
+                    finish()
+                    cancel()
+                }
+                setNegativeButton("返回游戏",null)
+            }.show()
+        }
 
     }
 

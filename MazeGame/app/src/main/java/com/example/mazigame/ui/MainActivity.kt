@@ -43,6 +43,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 startActivity(NewGameActivity::class.java)
             }
             main_continueGame -> {
+                GameBeam.getInstance().name = null
                 var intent = Intent(this,PlayGameActivity::class.java)
                 intent.putExtra("jixuyouxi",true)
                 startActivity(intent)
