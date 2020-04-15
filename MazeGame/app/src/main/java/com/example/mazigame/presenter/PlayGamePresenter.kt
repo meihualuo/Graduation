@@ -56,14 +56,22 @@ class PlayGamePresenter {
                 if (archiveText != null) {
                     withContext(Dispatchers.IO) {
                         val allObjectA = JSONObject(archiveText)
-                        val jsonG = allObjectA.getJSONObject(allObjectA.getString(StringUtil.KEY_NEWEST))
+                        var jsonG:JSONObject
+                        if (GameBeam.getInstance().name == null || !allObjectA.has(GameBeam.getInstance().name)){
+                            jsonG = allObjectA.getJSONObject(allObjectA.getString(StringUtil.KEY_NEWEST))
+                            GameBeam.getInstance().name = allObjectA.getString(StringUtil.KEY_NEWEST)
+                        }
+                        else {
+                            jsonG = allObjectA.getJSONObject(GameBeam.getInstance().name)
+                        }
+//                        jsonG = allObjectA.getJSONObject(allObjectA.getString(StringUtil.KEY_NEWEST))
                         GameBeam.getInstance().let {
 //                            it.mMapModel = mMapModel
 //                            it.people = mPeople
                             it.degree = jsonG.getInt(StringUtil.KEY_DEGREE)
                             it.type = jsonG.getString(StringUtil.KEY_TYPE)
                             it.duration = jsonG.getLong(StringUtil.KEY_DURATION)
-                            val map = ArchiveModel.readFile(mContext!!,allObjectA.getString(StringUtil.KEY_NEWEST))
+                            val map = ArchiveModel.readFile(mContext!!,GameBeam.getInstance().name!!)
                             when(it.type){
                                 StringUtil.TYPE_TRADITION -> {
                                     val mapA= MapUtil.stringToMap(map!!)
