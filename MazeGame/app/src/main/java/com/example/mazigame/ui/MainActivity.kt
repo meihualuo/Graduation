@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.View
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
+import com.example.mazigame.bean.GameBeam
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity(), View.OnClickListener {
@@ -37,6 +38,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 startActivity(NewGameActivity::class.java)
             }
             main_continueGame -> {
+                GameBeam.getInstance().name = null
                 var intent = Intent(this,PlayGameActivity::class.java)
                 intent.putExtra("jixuyouxi",true)
                 startActivity(intent)
