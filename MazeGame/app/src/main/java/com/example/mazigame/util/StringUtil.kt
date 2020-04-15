@@ -14,6 +14,22 @@ class StringUtil {
         val KEY_MANIPULATION = "manipulation"
 
         val MANI_TYPE_BOARD = "keyboard"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         val MANI_TYPE_GRAVITY = "gravity"
 
         val TYPE_TRADITION = "tradition"

@@ -1,16 +1,10 @@
 package com.example.mazigame.ui
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.os.Bundle
 import android.view.View
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
-import com.example.mazigame.bean.GameBeam
-import com.example.mazigame.model.ArchiveModel
-import com.example.mazigame.util.StringUtil
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONObject
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 

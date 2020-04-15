@@ -8,7 +8,7 @@ import com.example.mazigame.MyApplication
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
 import com.example.mazigame.bean.GameBeam
-import com.example.mazigame.model.ArchiveModel
+import com.example.mazigame.util.ArchiveUtil
 import com.example.mazigame.util.StringUtil
 import com.example.mazigame.view.MySeekBrd
 import kotlinx.android.synthetic.main.activity_new_game.*
@@ -58,7 +58,7 @@ class NewGameActivity : BaseActivity() , View.OnClickListener {
         when(v){
             new_game_create -> {
 //                GameBeam.getInstance().type = StringUtil.TYPE_TRADITION
-                ArchiveModel.saveSetUp(this)
+                ArchiveUtil.saveSetUp(this)
                 startActivity(PlayGameActivity::class.java)
             }
             new_game_pattern -> {

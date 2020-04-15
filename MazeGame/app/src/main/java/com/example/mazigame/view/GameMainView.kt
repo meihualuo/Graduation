@@ -10,6 +10,7 @@ import com.example.mazigame.R
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
 import com.example.mazigame.util.DensityUtil
+import com.example.mazigame.util.MapUtil
 
 class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
 
@@ -73,13 +74,13 @@ class GameMainView(ctx: Context, attrs: AttributeSet) :View(ctx,attrs){
         var horPadding = 0f
         var verPadding = 0f
         when(direction){
-            MapModel.MOVE_OF_LEFT ->
+            MapUtil.MOVE_OF_LEFT ->
                 horPadding = wallSide*2f
-            MapModel.MOVE_OF_RIGHT ->
+            MapUtil.MOVE_OF_RIGHT ->
                 horPadding = -wallSide*2f
-            MapModel.MOVE_OF_TOP ->
+            MapUtil.MOVE_OF_TOP ->
                 verPadding = wallSide*2f
-            MapModel.MOVE_OF_BOTTOM ->
+            MapUtil.MOVE_OF_BOTTOM ->
                 verPadding = -wallSide*2f
         }
         this.people = people

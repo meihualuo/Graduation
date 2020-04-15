@@ -16,12 +16,6 @@ public class MapModel{
     public static final int STAIR_IN = 4;
     public static final int STAIR_OUT = 5;
 
-
-    public static final int MOVE_OF_LEFT = 1;
-    public static final int MOVE_OF_RIGHT = 2;
-    public static final int MOVE_OF_TOP = 3;
-    public static final int MOVE_OF_BOTTOM = 4;
-
     private List<CubeModel> waits;
 
     public MapModel(int[][] map){

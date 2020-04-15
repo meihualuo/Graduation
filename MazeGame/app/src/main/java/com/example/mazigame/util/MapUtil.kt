@@ -8,6 +8,11 @@ class MapUtil {
     companion object{
 
 
+        const val MOVE_OF_LEFT = 1
+        const val MOVE_OF_RIGHT = 2
+        const val MOVE_OF_TOP = 3
+        const val MOVE_OF_BOTTOM = 4
+
         fun mapListToString(list: MutableList<MapModel>): String? {
             val result = StringBuilder()
             for (i in list.indices) {

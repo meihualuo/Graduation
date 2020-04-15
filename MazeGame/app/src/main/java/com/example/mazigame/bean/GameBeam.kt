@@ -17,9 +17,6 @@ class GameBeam {
     var layers:Int = 1
     var mMapModelList:MutableList<MapModel>? = null
 
-
-
-
     //需要单例模式，不需要考虑内存，但要考虑线程安全,故采用饿汉式
     companion object{
         private val instance = GameBeam()

@@ -1,16 +1,13 @@
-package com.example.mazigame.model
+package com.example.mazigame.util
 
 import android.content.Context
 import com.example.mazigame.MyApplication
 import com.example.mazigame.bean.GameBeam
-import com.example.mazigame.util.MapUtil
-import com.example.mazigame.util.StringUtil
-import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import kotlin.math.abs
 
-class ArchiveModel {
+class ArchiveUtil {
 
     companion object {
         fun setDatas(context: Context) {
@@ -37,10 +34,6 @@ class ArchiveModel {
             }
         }
 
-        fun saveScore(context: Context){
-
-        }
-
         fun setDatas(
             context: Context,
             name: String,
@@ -63,7 +56,7 @@ class ArchiveModel {
                 }
             }
             val jsonText = readFile(context,StringUtil.FILE_ARCHIVE)
-            val allObject:JSONObject
+            val allObject: JSONObject
             allObject = if (jsonText != null)
                 JSONObject(jsonText)
             else
@@ -100,7 +93,7 @@ class ArchiveModel {
             }
         }
 
-        fun readFile(context: Context,fileName: String): String? {
+        fun readFile(context: Context, fileName: String): String? {
             return try {
                 val file = context.openFileInput(fileName)
                 var temp = ByteArray(102400)

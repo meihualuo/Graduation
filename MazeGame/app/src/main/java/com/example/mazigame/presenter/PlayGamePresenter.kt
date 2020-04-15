@@ -10,9 +10,9 @@ import androidx.annotation.RequiresApi
 import com.example.mazigame.R
 import com.example.mazigame.base.MaterialDialog
 import com.example.mazigame.bean.GameBeam
-import com.example.mazigame.model.ArchiveModel
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
+import com.example.mazigame.util.ArchiveUtil
 import com.example.mazigame.util.MapUtil
 import com.example.mazigame.util.StringUtil
 import com.example.mazigame.view.MazeView
@@ -52,7 +52,7 @@ class PlayGamePresenter {
         this.mContext = context
         GlobalScope.launch(Dispatchers.Main) {
             if (oldGame){
-                val archiveText = ArchiveModel.readFile(mContext!!, StringUtil.FILE_ARCHIVE)
+                val archiveText = ArchiveUtil.readFile(mContext!!, StringUtil.FILE_ARCHIVE)
                 if (archiveText != null) {
                     withContext(Dispatchers.IO) {
                         val allObjectA = JSONObject(archiveText)
@@ -63,7 +63,7 @@ class PlayGamePresenter {
                             it.degree = jsonG.getInt(StringUtil.KEY_DEGREE)
                             it.type = jsonG.getString(StringUtil.KEY_TYPE)
                             it.duration = jsonG.getLong(StringUtil.KEY_DURATION)
-                            val map = ArchiveModel.readFile(mContext!!,allObjectA.getString(StringUtil.KEY_NEWEST))
+                            val map = ArchiveUtil.readFile(mContext!!,allObjectA.getString(StringUtil.KEY_NEWEST))
                             when(it.type){
                                 StringUtil.TYPE_TRADITION -> {
                                     val mapA= MapUtil.stringToMap(map!!)
@@ -79,7 +79,7 @@ class PlayGamePresenter {
                         val ps = jsonG.getString(StringUtil.KEY_PEOPLE)
                         val psToArray = ps.split("-")
                         mPeople = CubeModel(psToArray[0].toInt(), psToArray[1].toInt())
-                        ArchiveModel.saveSetUp(mContext!!)
+                        ArchiveUtil.saveSetUp(mContext!!)
                     }
                 }
             }else{
@@ -99,19 +99,19 @@ class PlayGamePresenter {
         if (mMapModel == null || mPeople == null)
             return
         when (direction){
-            MapModel.MOVE_OF_LEFT ->
+            MapUtil.MOVE_OF_LEFT ->
                 if(mPeople?.weighe!! > 1 && mMapModel?.map!![mPeople?.weighe!! -1][mPeople?.heighe!!] != MapModel.COLUMN)
                     mPeople!!.weighe -= 2
                 else return
-            MapModel.MOVE_OF_RIGHT ->
+            MapUtil.MOVE_OF_RIGHT ->
                 if(mPeople?.weighe!! <mMapModel?.wide!!-2 && mMapModel?.map!![mPeople?.weighe!!+1][mPeople?.heighe!!] != MapModel.COLUMN)
                     mPeople!!.weighe += 2
                 else return
-            MapModel.MOVE_OF_TOP ->
+            MapUtil.MOVE_OF_TOP ->
                 if(mPeople?.heighe!! >1 && mMapModel?.map!![mPeople?.weighe!!][mPeople?.heighe!!-1] != MapModel.COLUMN)
                     mPeople!!.heighe -= 2
                 else return
-            MapModel.MOVE_OF_BOTTOM ->
+            MapUtil.MOVE_OF_BOTTOM ->
                 if(mPeople?.heighe!! < mMapModel?.wide!!-2 && mMapModel?.map!![mPeople?.weighe!!][mPeople?.heighe!!+1] != MapModel.COLUMN)
                     mPeople!!.heighe += 2
                 else return
@@ -150,7 +150,7 @@ class PlayGamePresenter {
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO){
                 GameBeam.getInstance().degreeAdd()
-                ArchiveModel.saveSetUp(mContext!!)
+                ArchiveUtil.saveSetUp(mContext!!)
                 Thread.sleep(500)
             }
             creatMap()
@@ -225,14 +225,14 @@ class PlayGamePresenter {
                 jsonObject.put(StringUtil.KEY_NAME,text)
                 jsonObject.put(StringUtil.KEY_SCORE,score)
                 jsonObject.put(StringUtil.KEY_TIME,timeToStr)
-                val jsonText = ArchiveModel.readFile(mContext!!, StringUtil.FILE_SCORE)
+                val jsonText = ArchiveUtil.readFile(mContext!!, StringUtil.FILE_SCORE)
                 val oldJson:JSONArray
                 oldJson = if (jsonText != null)
                     JSONArray(jsonText)
                 else
                     JSONArray()
                 oldJson.put(jsonObject)
-                ArchiveModel.saveFile(mContext!!,oldJson.toString(),StringUtil.FILE_SCORE)
+                ArchiveUtil.saveFile(mContext!!,oldJson.toString(),StringUtil.FILE_SCORE)
                 onPass()
                 sorceDialog.cancel()
             }
@@ -258,7 +258,7 @@ class PlayGamePresenter {
             val text = edit.text.toString()
             if(!(text.isEmpty() || text == "")){
                 GameBeam.getInstance().name = text
-                ArchiveModel.setDatas(mContext!!)
+                ArchiveUtil.setDatas(mContext!!)
                 mDataDialog?.cancel()
             }
         }
@@ -281,10 +281,6 @@ class PlayGamePresenter {
         mMapDialog?.setView(view)
         mMapDialog?.setCanceledOnTouchOutside(true)
         mMapDialog?.show()
-
-    }
-
-    fun dropOut(){
 
     }
 }

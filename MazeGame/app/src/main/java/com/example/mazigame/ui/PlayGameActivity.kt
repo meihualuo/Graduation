@@ -14,6 +14,7 @@ import com.example.mazigame.bean.GameBeam
 import com.example.mazigame.model.CubeModel
 import com.example.mazigame.model.MapModel
 import com.example.mazigame.presenter.PlayGamePresenter
+import com.example.mazigame.util.MapUtil
 import com.example.mazigame.util.StringUtil
 import kotlinx.android.synthetic.main.activity_play_game.*
 import io.reactivex.Observable
@@ -58,16 +59,16 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
     override fun onClick(v: View?) {
         when(v){
             btn_top -> {
-                mPresenter.movePeople(MapModel.MOVE_OF_TOP)
+                mPresenter.movePeople(MapUtil.MOVE_OF_TOP)
             }
             btn_bottom -> {
-                mPresenter.movePeople(MapModel.MOVE_OF_BOTTOM)
+                mPresenter.movePeople(MapUtil.MOVE_OF_BOTTOM)
             }
             btn_left -> {
-                mPresenter.movePeople(MapModel.MOVE_OF_LEFT)
+                mPresenter.movePeople(MapUtil.MOVE_OF_LEFT)
             }
             btn_right -> {
-                mPresenter.movePeople(MapModel.MOVE_OF_RIGHT)
+                mPresenter.movePeople(MapUtil.MOVE_OF_RIGHT)
             }
             road -> {
                 maze_view.let {
@@ -129,16 +130,16 @@ class PlayGameActivity : BaseActivity(), View.OnClickListener,
             .subscribe {
                 val threshold = 1.5f
                 if (x > threshold && abs(y)< 1){
-                    mPresenter.movePeople(MapModel.MOVE_OF_LEFT)
+                    mPresenter.movePeople(MapUtil.MOVE_OF_LEFT)
                 }
                 if (x < -threshold && abs(y)< 1){
-                    mPresenter.movePeople(MapModel.MOVE_OF_RIGHT)
+                    mPresenter.movePeople(MapUtil.MOVE_OF_RIGHT)
                 }
                 if (y > threshold && abs(x)< 1){
-                    mPresenter.movePeople(MapModel.MOVE_OF_BOTTOM)
+                    mPresenter.movePeople(MapUtil.MOVE_OF_BOTTOM)
                 }
                 if (y < -threshold && abs(x)< 1){
-                    mPresenter.movePeople(MapModel.MOVE_OF_TOP)
+                    mPresenter.movePeople(MapUtil.MOVE_OF_TOP)
                 }
             }
     }

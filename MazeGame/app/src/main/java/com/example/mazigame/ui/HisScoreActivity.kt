@@ -1,24 +1,18 @@
 package com.example.mazigame.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mazigame.R
 import com.example.mazigame.base.BaseActivity
 import com.example.mazigame.base.RecycleViewDivider
-import com.example.mazigame.model.ArchiveModel
-import com.example.mazigame.ui.Adapter.ArchiveAdadpter
-import com.example.mazigame.ui.Adapter.ArchiveEntry
 import com.example.mazigame.ui.Adapter.HisScoreAdapter
 import com.example.mazigame.ui.Adapter.ScoreEnty
+import com.example.mazigame.util.ArchiveUtil
 import com.example.mazigame.util.DensityUtil
 import com.example.mazigame.util.StringUtil
-import kotlinx.android.synthetic.main.activity_archive.*
-import kotlinx.android.synthetic.main.activity_his_score.*
 import kotlinx.android.synthetic.main.activity_his_score.recycler
 import org.json.JSONArray
-import org.json.JSONObject
 
 class HisScoreActivity : BaseActivity() {
 
@@ -46,7 +40,7 @@ class HisScoreActivity : BaseActivity() {
         recycler.addItemDecoration(divider)
 
         recycler.adapter = mAdapter
-        val archiveText = ArchiveModel.readFile(this, StringUtil.FILE_SCORE)
+        val archiveText = ArchiveUtil.readFile(this, StringUtil.FILE_SCORE)
         val jsonArray = JSONArray(archiveText)
         for (i in 0 until jsonArray.length()){
             val json = jsonArray.getJSONObject(i)
