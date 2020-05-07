@@ -1,5 +1,6 @@
 package com.example.mazigame.ui
 
+import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,11 +49,11 @@ class HisScoreActivity : BaseActivity() {
         val jsonArray = JSONArray(archiveText)
         for (i in 0 until jsonArray.length()){
             val json = jsonArray.getJSONObject(i)
-            val sorceEnty = ScoreEnty()
-            sorceEnty.name = json.getString(StringUtil.KEY_NAME)
-            sorceEnty.time = json.getString(StringUtil.KEY_TIME)
-            sorceEnty.score = json.getInt(StringUtil.KEY_SCORE)
-            mAdapter?.add(sorceEnty)
+            val scoreEnty = ScoreEnty()
+            scoreEnty.name = json.getString(StringUtil.KEY_NAME)
+            scoreEnty.time = json.getString(StringUtil.KEY_TIME)
+            scoreEnty.score = json.getInt(StringUtil.KEY_SCORE)
+            mAdapter?.add(scoreEnty)
 
         }
     }
@@ -66,14 +67,36 @@ class HisScoreActivity : BaseActivity() {
                 setTitle("删除得分")
                 setMessage("你要删除该得分记录吗？")
                 setPositiveButton("删除"){
+                    val item = mAdapter?.getItem(pos)
+                    removeData(item)
                     mAdapter?.remove(pos)
                     cancel()
-                    //TODO 删除本地文件
                 }
                 setNegativeButton("取消",null)
             }
             dialog.show()
         }
+    }
+    
+    fun removeData(item:ScoreEnty?){
+        item?.name ?: return
+        val archiveText = ArchiveUtil.readFile(this, StringUtil.FILE_SCORE)
+        if (archiveText == null || archiveText == "") {
+            return
+        }
+        val jsonArray = JSONArray(archiveText)
+        for (i in 0 until jsonArray.length()){
+            val json = jsonArray.getJSONObject(i)
+            if (item.score == json.getInt(StringUtil.KEY_SCORE)){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    jsonArray.remove(i)
+                    ArchiveUtil.saveFile(this,jsonArray.toString(),StringUtil.FILE_SCORE)
+                }
+                break
+            }
+        }
+
+
     }
 
 }

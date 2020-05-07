@@ -86,13 +86,27 @@ class ArchiveActivity : BaseActivity() {
                 setTitle("删除存档")
                 setMessage("你要删除该游戏吗？")
                 setPositiveButton("删除"){
+                    val item = mAdapter?.getItem(pos)
+                    removeData(item)
                     mAdapter?.remove(pos)
                     cancel()
-                    //TODO 删除本地文件
                 }
                 setNegativeButton("取消",null)
             }
             dialog.show()
+        }
+    }
+
+    fun removeData(item:ArchiveEntry?){
+        item?.name ?: return
+        val archiveText = ArchiveUtil.readFile(this, StringUtil.FILE_ARCHIVE)
+        if (archiveText == null || archiveText == "") {
+            return
+        }
+        val jsonObject = JSONObject(archiveText)
+        if(jsonObject.has(item.name)){
+            jsonObject.remove(item.name)
+            ArchiveUtil.saveFile(this, jsonObject.toString(), StringUtil.FILE_ARCHIVE)
         }
     }
 
